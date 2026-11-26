@@ -762,7 +762,7 @@
             (ossz.kategoriak || ossz.sorok.map((s) => s.kat).filter((k, i, l) => l.indexOf(k) === i)).map((k) => '<option>' + esc(k) + '</option>').join('') +
             (ossz.sorok.some((s) => s.kivont) ? '<option value="' + KIVONT + '">Eladott, selejtezett, átadott eszközök</option>' : '') + '</select></div>' +
         '</div>' +
-        '<div class="talalat"><span class="bal"><span id="db"></span><button type="button" class="gomb kicsi torol" id="szurotorol" disabled><i class="ti ti-filter-off" aria-hidden="true"></i>Szűrők törlése</button></span><span class="tipp"><i class="ti ti-pointer" aria-hidden="true"></i>A bolt nevére kattintva megnyílik a bolt adatlapja – minden felülvizsgálat, eszköz és dokumentum egy helyen, részletesen.</span></div>';
+        '<div class="talalat"><span class="bal"><span id="db"></span><button type="button" class="gomb kicsi torol" id="szurotorol" disabled><i class="ti ti-filter-off" aria-hidden="true"></i>Szűrők törlése</button></span><span class="tipp"><i class="ti ti-pointer" aria-hidden="true"></i>Kattints a bolt nevére: megnyílik az adatlapja, ahol egy helyen, részletesen látod a bolt összes felülvizsgálatát, eszközét és dokumentumát.</span></div>';
       $('fejszuro').hidden = false;
       fejMeret();
       $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt / cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
