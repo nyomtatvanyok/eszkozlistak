@@ -378,7 +378,11 @@
   /* a boltok csoportjai fehér sáv nélkül, egymás alatt; a csoportokat a barna keret választja el (lekerekítés nélkül) */
   .tabla td.c-bolt.gcell, .tabla tr.gl td:last-child { border-radius: 0; }
   /* a rögzített fejrész alatti rés: a görgetett lista nem látszik át (a rés a lap hátterével takarva) */
-  .fej::after { content: ""; position: absolute; left: -2px; right: -2px; top: 100%; height: 15px; background: var(--bg); }
+  /* (javítva: a takaró a lap teljes szélességében fed – árnyék + vízszintes kivágás, így nem okoz vízszintes görgetést –, pontosan
+     a rés magasságában, és csak görgetés közben van bekapcsolva; így sehol nem látszik külön csíknak) */
+  .fej::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: var(--fejRes, 14px); background: var(--bg);
+    box-shadow: 0 0 0 100vw var(--bg); clip-path: inset(0 -100vw); display: none; pointer-events: none; }
+  body.gorget .fej::after { display: block; }
   /* táblázatfejléc: rendes cellaszegély (sötétbarna keret, világos elválasztók), sarkok lekerekítés nélkül */
   .tabla th { border-top: 1px solid #5f2c07; border-bottom: 1px solid #5f2c07; border-right: 1px solid rgba(255, 255, 255, .38); }
   .tabla th:first-child { border-left: 1px solid #5f2c07; } .tabla th:last-child { border-right: 1px solid #5f2c07; }
@@ -416,6 +420,12 @@
     border: 1px solid #5f2c07; z-index: -1; }
   .tablakartya .tabla th:first-child::after { border-right: 0; border-radius: 12px 0 0 12px; }
   .tablakartya .tabla th:last-child::after { border-left: 1px solid rgba(255, 255, 255, .38); border-radius: 0 12px 12px 0; }
+  /* a lista alsó sarkai is lekerekítve – a fejléccel együtt az egész táblázat lekerekített téglalap */
+  @media (min-width: 761px) {
+    .tabla td.c-bolt.veg { border-bottom-left-radius: 12px; }
+    .tabla tbody tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+    .tabla tbody tr:last-child td.c-ceg:only-child { border-radius: 0; }
+  }
   .talalat .bal { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .talalat .torol { min-height: 36px; font-size: 15px; padding: 5px 12px; }
   .talalat .torol:disabled { opacity: .45; cursor: default; }
@@ -829,6 +839,9 @@
       '<td>' + allapotJel(s) + '</td>' +
       '<td>' + (s.id ? '<span class="gombok">' + nezGomb(s.id) + '<button class="gomb kicsi" data-id="' + esc(s.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>' : '') + '</td>' +
       '</tr>'; }).join('') : '<tr><td colspan="9" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
+    // a lista alsó sarkai lekerekítve (2026.11.26.: a táblázat végig lekerekített téglalap): az utolsó bolt cellája és az utolsó sor
+    const vegBolt = [...$('tsor').querySelectorAll('td.c-bolt')].pop();
+    if (vegBolt) vegBolt.classList.add('veg');
     gombokKot($('tsor'));
     $('tsor').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
   }
@@ -995,10 +1008,18 @@
     const f = document.querySelector('.fej'), t = document.querySelector('header.top'), s = document.documentElement.style;
     if (t) s.setProperty('--topM', t.offsetHeight + 'px');
     // a fejrész alatti rés (margó) is beleszámít: a táblázatfejléc a rés alatt áll meg, a rést a lap háttere takarja (2026.11.26.)
-    if (f) s.setProperty('--fejM', (f.offsetHeight + (parseFloat(getComputedStyle(f).marginBottom) || 0)) + 'px');
+    if (f) {
+      const res = parseFloat(getComputedStyle(f).marginBottom) || 0;
+      s.setProperty('--fejM', (f.offsetHeight + res) + 'px');
+      s.setProperty('--fejRes', res + 'px'); // a takaró pontosan a rés magasságú (nem lóg rá az alatta lévő kártyára)
+    }
   }
   if (!mobilSites) {
     window.addEventListener('resize', fejMeret);
+    // a rés-takaró csak görgetés közben kell (nyugalmi helyzetben nincs mit takarnia)
+    const gorgetJel = () => document.body.classList.toggle('gorget', window.scrollY > 2);
+    window.addEventListener('scroll', gorgetJel, { passive: true });
+    gorgetJel();
     const fejFigyelo = window.ResizeObserver ? new ResizeObserver(fejMeret) : null;
     if (fejFigyelo) { fejFigyelo.observe(document.querySelector('.fej')); fejFigyelo.observe(document.querySelector('header.top')); }
     fejMeret();
