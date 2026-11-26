@@ -407,12 +407,21 @@
   footer .kapcs .gomb { text-decoration: none; min-height: 48px; padding: 10px 20px; font-size: 18px; color: #fff; }
   footer .kapcs .gomb i { font-size: 20px; }
   @media (max-width: 560px) { footer .kapcs .gomb { width: 100%; } footer .labkeret { padding: 14px; } }
+  /* a táblázatfejléc végig lekerekített téglalap (2026.11.26.): a két szélső cellában a barna sáv egy lekerekített réteg, mögötte a
+     lap háttere – így görgetéskor a sarkoknál sem látszik át a lista; a táblázatkártya maga keret és háttér nélküli */
+  .kartya.tablakartya { background: transparent; border: 0; box-shadow: none; }
+  .tablakartya .tabla th:first-child, .tablakartya .tabla th:last-child { background: transparent; border-color: transparent; }
+  .tablakartya .tabla th:first-child::before, .tablakartya .tabla th:last-child::before { content: ""; position: absolute; inset: 0; background: var(--bg); z-index: -2; }
+  .tablakartya .tabla th:first-child::after, .tablakartya .tabla th:last-child::after { content: ""; position: absolute; inset: 0; background: var(--barna);
+    border: 1px solid #5f2c07; z-index: -1; }
+  .tablakartya .tabla th:first-child::after { border-right: 0; border-radius: 12px 0 0 12px; }
+  .tablakartya .tabla th:last-child::after { border-left: 1px solid rgba(255, 255, 255, .38); border-radius: 0 12px 12px 0; }
   .talalat .bal { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .talalat .torol { min-height: 36px; font-size: 15px; padding: 5px 12px; }
   .talalat .torol:disabled { opacity: .45; cursor: default; }
   /* a Cég oszlop függőlegesen és vízszintesen is középen (2026.11.26.) */
-  .tabla td.c-ceg { vertical-align: middle; text-align: center; }
-  .tabla td.c-ceg .ragad { position: static; }
+  /* (2026.11.26. később: a cég vízszintesen középen, függőlegesen felül – görgetéskor a csoport tetején marad) */
+  .tabla td.c-ceg { vertical-align: top; text-align: center; }
   /* megszűnt bolt: tájékoztató kártya, az utolsó dokumentum kiemelve */
   .zartinfo p { margin: 0; padding: 12px 16px; font-size: 16px; color: var(--kakao); }
   .reg.utolso { background: #fdf9f1; }
