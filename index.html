@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795714837311";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795715064422";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -582,6 +582,7 @@
   .fmjel { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; padding: 2px 9px; border-radius: 6px; }
   .fmjel.admin { background: var(--krem); color: var(--barna); }
   .fmjel.en { background: #e8f3e2; color: #2e5e1e; }
+  #al.frissul::after { content: " · frissítés…"; color: var(--hint); }
   .fmjel.tulaj { background: #f3e7d1; color: var(--kakao); }
   .fmgombok { display: flex; flex-wrap: wrap; gap: 6px; }
   .fmodal .gomb.kicsi { min-height: 38px; padding: 6px 12px; font-size: 14px; gap: 6px; border-radius: 10px; }
@@ -808,10 +809,10 @@
         if (n > i) { p = Math.max(p, TOLTO_HATAR[Math.min(n, lepesek.length)]); i = n; t0 = Date.now(); kiir(); }
       },
       // sima időzítő (a requestAnimationFrame háttérben lévő lapon áll – ott a betöltés megakadna)
-      szunet: () => new Promise((ok) => setTimeout(ok, 140)),
+      szunet: () => new Promise((ok) => setTimeout(ok, 40)), // (2026.11.26.: 140 → 40 ms – gyorsítás)
       kesz() {
         ctl.lep(lepesek.length); p = 100; kiir(); el.classList.add('kesz'); clearInterval(ora);
-        return new Promise((ok) => setTimeout(ok, 280));
+        return new Promise((ok) => setTimeout(ok, 120)); // (280 → 120 ms)
       },
     };
     return ctl;
@@ -1011,21 +1012,82 @@
       elozmenyHtml(s.elozmeny, { bolt: bolt, ceg: ceg, uzembe: s.uzembe ? s.utolso : '' }) + '</div>';
   }
 
+  // ---------------- gyors betöltés (2026.11.26., felhasználó: „A betöltést is gyorsítani kell! Ezt elemezd ki”)
+  // Mérés (belépve): minden Apps Script-hívás ~1,2–1,4 s alapidő; boltLista ~1,6 s, osszesito ~2,0 s (170 KB) – eddig egymás után,
+  // ~4,3 s. Most: (1) a kérések párhuzamosan mennek; (2) a legutóbb betöltött boltlista és összesítő a böngészőben (a belépővel azonos
+  // tárolóban, kijelentkezéskor és a belépés lejártakor törlődik) – az oldal azonnal ebből rajzol, a háttérben frissít, és ha változott,
+  // a szűrők megtartásával újrarajzol; (3) a töltőképernyő szünetei rövidebbek.
+  const GYORS_KULCS = 'bolti_dokumentumtar_gyors';
+  let osszIgeret = null, boltIgeret = null;
+  function gyorsOlvas() {
+    const b = belepAdat();
+    if (!b) return null;
+    for (const t of tarolok) {
+      try { const x = JSON.parse(t().getItem(GYORS_KULCS) || 'null'); if (x && x.felh === b.felh && Date.now() - x.ido < 12 * 3600000 && x.ossz && x.bl) return x; } catch (e) { /* nincs tároló */ }
+    }
+    return null;
+  }
+  function gyorsIr(bl, o) {
+    const b = belepAdat();
+    if (!b) return;
+    try { const t = localStorage.getItem(BELEPES_KULCS) ? localStorage : sessionStorage; t.setItem(GYORS_KULCS, JSON.stringify({ felh: b.felh, ido: Date.now(), bl: bl, ossz: o })); }
+    catch (e) { /* tele a tároló – nem baj, legközelebb a szerverről jön */ }
+  }
+  function gyorsTorol() { tarolok.forEach((t) => { try { t().removeItem(GYORS_KULCS); } catch (e) { /* nincs tároló */ } }); }
+  /** A Nézet / bolt választó a boltlistából; a kiválasztott érték megmarad (háttérfrissítésnél). */
+  function boltValaszto(r) {
+    const sel = $('bolt'), most = sel.disabled ? '' : sel.value;
+    sel.innerHTML = '<option value="' + OSSZ + '">Összesített nyilvántartás (könyvelői nézet)</option><optgroup label="Boltok">' +
+      r.boltok.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' +
+      ((r.zartak || []).length ? '<optgroup label="Megszűnt / átadott boltok (archív)">' + r.zartak.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' : '');
+    sel.disabled = false;
+    sel.onchange = () => valt(sel.value);
+    $('vissza').onclick = () => { sel.value = OSSZ; valt(OSSZ); window.scrollTo(0, 0); };
+    if (most) sel.value = most;
+  }
+  /** Az összesítő újrarajzolása friss adatból – a beírt keresés és a szűrők megmaradnak. */
+  async function osszUjrarajzol() {
+    const ert = (id) => ($(id) ? $(id).value : '');
+    const sz = { q: ert('q'), fceg: ert('fceg'), fbolt: ert('fbolt'), fkat: ert('fkat') }, y = window.scrollY;
+    await osszesitoMutat();
+    Object.keys(sz).forEach((k) => { if ($(k) && sz[k]) $(k).value = sz[k]; });
+    if (Object.keys(sz).some((k) => sz[k])) szur();
+    window.scrollTo(0, y);
+  }
+  /** Háttérfrissítés a tárolt adatok megjelenítése után. */
+  async function hatterFrissites() {
+    const al = $('al');
+    al.classList.add('frissul');
+    try {
+      const [r, o] = await Promise.all([hivas('boltLista'), hivas('osszesito')]);
+      gyorsIr(r, o);
+      boltValaszto(r);
+      if (JSON.stringify(o) !== JSON.stringify(ossz)) { ossz = o; if ($('bolt').value === OSSZ) await osszUjrarajzol(); }
+    } catch (e) { /* marad a tárolt adat; lejárt belépésnél a belépési ablak jön */ }
+    finally { al.classList.remove('frissul'); }
+  }
+
   async function indul() {
+    // azonnal a legutóbbi adatokból (összesítő nézet), a háttérben frissítés
+    const gy = KEZDO ? null : gyorsOlvas();
+    if (gy) {
+      ossz = gy.ossz; boltValaszto(gy.bl); $('bolt').value = OSSZ; valt(OSSZ);
+      hatterFrissites();
+      return;
+    }
     indulTolto = tolto(KEZDO ? 'bolt' : 'ossz', KEZDO);
     indulTolto.lep(0);
+    // a kérések párhuzamosan: a boltlistával együtt már az összesítő / a megnyitott bolt adatai is jönnek
+    const op = KEZDO ? null : hivas('osszesito');
+    if (op) { op.catch(() => { /* a nézet kezeli */ }); osszIgeret = op; }
+    if (KEZDO) { boltIgeret = { nev: KEZDO, p: hivas('boltAdat', KEZDO) }; boltIgeret.p.catch(() => { /* a nézet kezeli */ }); }
     try {
       const r = await hivas('boltLista');
-      const sel = $('bolt');
-      sel.innerHTML = '<option value="' + OSSZ + '">Összesített nyilvántartás (könyvelői nézet)</option><optgroup label="Boltok">' +
-        r.boltok.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' +
-        ((r.zartak || []).length ? '<optgroup label="Megszűnt / átadott boltok (archív)">' + r.zartak.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' : '');
-      sel.disabled = false;
-      sel.onchange = () => valt(sel.value);
-      $('vissza').onclick = () => { sel.value = OSSZ; valt(OSSZ); window.scrollTo(0, 0); };
+      boltValaszto(r);
       const kezdo = KEZDO && (r.boltok.indexOf(KEZDO) >= 0 || (r.zartak || []).indexOf(KEZDO) >= 0) ? KEZDO : OSSZ;
-      sel.value = kezdo;
+      $('bolt').value = kezdo;
       valt(kezdo);
+      if (op) op.then((o) => gyorsIr(r, o)).catch(() => { /* nem baj */ });
     } catch (e) { hiba('Az oldal most nem tölthető be. Próbáld újra pár perc múlva. (' + e.message + ')'); $('lista').innerHTML = ''; }
   }
 
@@ -1043,7 +1105,7 @@
     let t = indulTolto; indulTolto = null;
     if (!ossz) { if (!t || t.fajta !== 'ossz') t = tolto('ossz'); t.lep(1); } else t = null;
     try {
-      if (!ossz) ossz = await hivas('osszesito');
+      if (!ossz) { const ig = osszIgeret || hivas('osszesito'); osszIgeret = null; ossz = await ig; }
       if (sajat !== kert) return;
       if (t) { t.lep(2); await t.szunet(); t.lep(3); await t.szunet(); await t.kesz(); if (sajat !== kert) return; }
       $('al').textContent = 'Könyvelői nézet · minden bolt tételei, bankterminálja és blokknyomtatója · frissítve: ' + ossz.frissitve;
@@ -1169,7 +1231,9 @@
     if (!t || t.fajta !== 'bolt') t = tolto('bolt', nev);
     t.lep(1);
     try {
-      const r = await hivas('boltAdat', nev);
+      let ig = null;
+      if (boltIgeret && boltIgeret.nev === nev) { ig = boltIgeret.p; boltIgeret = null; } // az induláskor már elindított kérés
+      const r = await (ig || hivas('boltAdat', nev));
       if (sajat !== kert) return;
       t.lep(2); await t.szunet(); t.lep(3); await t.szunet(); await t.kesz();
       if (sajat !== kert) return;
@@ -1313,7 +1377,7 @@
     for (const t of tarolok) { try { const x = JSON.parse(t().getItem(BELEPES_KULCS) || 'null'); if (jo(x)) return (window.__belepo = x); } catch (e) { /* nincs tároló */ } }
     return null;
   }
-  function belepesTorol() { window.__belepo = null; tarolok.forEach((t) => { try { t().removeItem(BELEPES_KULCS); } catch (e) { /* nincs tároló */ } }); }
+  function belepesTorol() { window.__belepo = null; window.__fLista = null; gyorsTorol(); tarolok.forEach((t) => { try { t().removeItem(BELEPES_KULCS); } catch (e) { /* nincs tároló */ } }); }
   function belepesMentes(x, marad) {
     belepesTorol(); window.__belepo = x;
     try { (marad ? localStorage : sessionStorage).setItem(BELEPES_KULCS, JSON.stringify(x)); } catch (e) { /* csak erre a megnyitásra */ }
