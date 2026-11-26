@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795726422101";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795732548673";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -582,6 +582,16 @@
   .fmjel { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; padding: 2px 9px; border-radius: 6px; }
   .fmjel.admin { background: var(--krem); color: var(--barna); }
   .fmjel.en { background: #e8f3e2; color: #2e5e1e; }
+  /* oszlopszélességek (2026.11.26., felhasználó: „Állapot lehet keskenyebb, a Beüzemelésre vár legyen a maximum szélesség, a többi 2 sorba
+     … az azonosító lehet szélesebb … a tételt is szélesebbre”): az állapotjelvény legfeljebb a „Beüzemelésre vár” szélessége (130 px), a
+     hosszabb két sorba törik; a felszabaduló hely az Azonosítóé és a Tételé. Az azonosító: felül a TID, alatta az S/N · MID, középre. */
+  .tabla td.c-all { width: 146px; }
+  .tabla td.c-all .badge { white-space: normal; max-width: 130px; line-height: 1.2; text-align: left; }
+  .tabla td.c-all .badge.ket { white-space: normal; }
+  .tabla td.c-all .badge.ket.online { text-align: center; justify-content: center; }
+  .tabla td.azon-o { text-align: center; min-width: 255px; }
+  .tabla td.azon-o .sub { margin-top: 2px; }
+  @media (min-width: 1200px) { .tabla td.c-kat + td { min-width: 255px; } }
   #al.frissul::after { content: " · frissítés…"; color: var(--hint); }
   .fmjel.tulaj { background: #f3e7d1; color: var(--kakao); }
   .fmgombok { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1151,11 +1161,13 @@
   function allapotJel(s) {
     if (!s.allapot) return '';
     const kv = s.kivont ? KIV_ALL[s.allapot] : null, szin = kv ? kv[0] : (s.szin || 'gray');
-    const ik = kv ? kv[1] : s.terminal ? TERM_IKON[s.allapot] : SZIN_IKON[szin];
+    // (2026.11.26.) az „Online pénztárgép (NAV-bekötött)” ikon nélkül, két sorban – így fér el a „Beüzemelésre vár” szélességében
+    const online = s.allapot === 'Online pénztárgép (NAV-bekötött)';
+    const ik = online ? '' : kv ? kv[1] : s.terminal ? TERM_IKON[s.allapot] : SZIN_IKON[szin];
     // a hosszú állapot két sorban (2026.11.26.: „Hamarosan esedékes mehet 2 sorban … ez az oszlop lehet vékonyabb”)
-    const ket = /^(Hamarosan esedékes|Másik boltba átadva)$/.test(s.allapot);
+    const ket = /^(Hamarosan esedékes|Másik boltba átadva|Online pénztárgép (NAV-bekötött))$/.test(s.allapot);
     const szoveg = ket ? esc(s.allapot).replace(/ (\S+)$/, '<br>$1') : esc(s.allapot);
-    return '<span class="badge b-' + esc(szin) + (ket ? ' ket' : '') + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + (ket ? '<span>' + szoveg + '</span>' : szoveg) + '</span>';
+    return '<span class="badge b-' + esc(szin) + (ket ? ' ket' : '') + (online ? ' online' : '') + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + (ket ? '<span>' + szoveg + '</span>' : szoveg) + '</span>';
   }
   function szur() {
     const szavak = norm($('q').value).split(/\s+/).filter(Boolean), c = $('fceg').value, b = $('fbolt').value, k = $('fkat').value;
@@ -1200,7 +1212,7 @@
         (s.azon2 ? '<div class="sub">' + s.azon2.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join(' · ') + '</div>' : '') + '</td>' +
       '<td class="d' + (datum ? '' : ' ures') + '"' + (kv && kv.utolso && !s.datum ? ' title="Utolsó felülvizsgálat"' : '') + '>' + esc(datum || (s.terminal || s.kivont ? '' : '–')) + '</td>' +
       '<td class="d' + (s.terminal || s.kivont ? ' ures' : '') + '">' + esc(s.terminal || s.kivont ? '' : s.lejaratNelkul ? 'lejárat nélkül' : (s.kov ? ig(s.kov) : '–')) + '</td>' +
-      '<td>' + allapotJel(s) + '</td>' +
+      '<td class="c-all">' + allapotJel(s) + '</td>' +
       '<td>' + (s.id ? '<span class="gombok">' + nezGomb(s.id) + '<button class="gomb kicsi" data-id="' + esc(s.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>' : '') + '</td>' +
       '</tr>'; }).join('') : '<tr><td colspan="9" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
     // a lista alsó sarkai lekerekítve (2026.11.26.: a táblázat végig lekerekített téglalap): az utolsó bolt cellája és az utolsó sor
