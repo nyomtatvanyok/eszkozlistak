@@ -115,6 +115,39 @@
   .fej h1 { margin: 0; font-size: 20px; font-weight: 600; }
   .fej .al { margin: 0; color: var(--muted); font-size: 13px; }
   .fej .cegsor { margin: 1px 0 0; color: var(--brand); font-size: 14px; font-weight: 600; }
+  .fej .cimsor { margin: 1px 0 0; color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 4px; }
+  .fej .cimsor i { font-size: 14px; color: var(--brand); }
+  /* boltoldal: a név-blokk szélesebb (a cím egy sorban férjen el), a választó keskenyebb */
+  @media (min-width: 761px) { main.keskeny .fej .nev { min-width: 280px; } main.keskeny .fej select { min-width: 0; width: 240px; } }
+  /* töltőképernyő (2026.11.26.): lépések állapotjelzéssel és százalékos sávval */
+  .tolto { max-width: 560px; margin: 26px auto 30px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(29, 39, 51, .07); padding: 22px 24px 20px; }
+  .tolto-fej { display: flex; align-items: center; gap: 14px; }
+  .tolto-ikon { width: 46px; height: 46px; border-radius: 12px; background: #e8f0f8; color: var(--brand); display: grid; place-items: center; font-size: 24px; flex: none;
+    animation: toltoLeg 1.6s ease-in-out infinite; }
+  @keyframes toltoLeg { 0%, 100% { box-shadow: 0 0 0 0 rgba(31, 78, 121, .18); } 50% { box-shadow: 0 0 0 7px rgba(31, 78, 121, 0); } }
+  .tolto-szoveg { min-width: 0; }
+  .tolto-cim { font-weight: 600; font-size: 16px; color: var(--text); overflow-wrap: anywhere; }
+  .tolto-al { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .tolto-pct { margin-left: auto; font-size: 24px; font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+  .tolto-sav { height: 10px; background: #e6edf4; border-radius: 99px; overflow: hidden; margin: 16px 0 16px; }
+  .tolto-tolt { height: 100%; width: 0; border-radius: 99px; transition: width .3s ease;
+    background: linear-gradient(90deg, #3b7bbf, #1f4e79); position: relative; overflow: hidden; }
+  .tolto-tolt::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+    transform: translateX(-100%); animation: toltoFeny 1.4s ease-in-out infinite; }
+  @keyframes toltoFeny { to { transform: translateX(100%); } }
+  .tolto.kesz .tolto-tolt { background: linear-gradient(90deg, #3d8b40, #2e7d32); }
+  .tolto.kesz .tolto-tolt::after, .tolto.kesz .tolto-ikon { animation: none; }
+  .tolto-lepesek { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .tolto-lepesek li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #9aa5b1; }
+  .tolto-lepesek .jel { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d5dde6; display: grid; place-items: center; flex: none; font-size: 13px; color: #fff; }
+  .tolto-lepesek li.fut { color: var(--text); font-weight: 600; }
+  .tolto-lepesek li.fut .jel { border-color: #c5d3e0; border-top-color: var(--brand); animation: s .8s linear infinite; }
+  .tolto-lepesek li.kesz { color: var(--text); }
+  .tolto-lepesek li.kesz .jel { background: #2e7d32; border-color: #2e7d32; }
+  .tolto-lepesek li .ido { margin-left: auto; color: var(--muted); font-weight: 400; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .tolto-labl { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  @media (max-width: 560px) { .tolto { margin: 14px 0 20px; padding: 18px 16px; } .tolto-pct { font-size: 20px; min-width: 52px; } }
   .fej label, .szuro label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
   select, input[type=search] { font: inherit; font-size: 15px; padding: 9px 12px; border: 1px solid #b9c3cd; border-radius: 8px; background: #fff; max-width: 100%; }
   select { min-width: 260px; cursor: pointer; }
@@ -172,7 +205,7 @@
   .tabla td { padding: 4px 8px; border-bottom: 1px solid #e6ebf0; border-right: 1px solid #eef1f4; vertical-align: middle; line-height: 1.35; }
   .tabla th:last-child, .tabla td:last-child { border-right: 0; text-align: center; }
   .tablakartya .tabla th:first-child { border-top-left-radius: 11px; } .tablakartya .tabla th:last-child { border-top-right-radius: 11px; }
-  .tabla tbody tr:last-child td { border-bottom: 0; }
+  .tabla tbody tr:last-child:not(.gl) td { border-bottom: 0; }
   .tabla tr:hover td { background: #f7fafc; }
   .tabla .bolt { font-weight: 600; }
   .tabla .sub { color: var(--muted); font-size: 12px; }
@@ -188,16 +221,32 @@
   .tabla .zartb { display: block; font-size: 11.5px; }
   .tabla .gomb.kicsi { padding: 3px 9px; }
   .tabla .eszk { font-size: 11.5px; padding: 0 7px; margin-left: 6px; }
+  /* boltonkénti keret (2026.11.26.): a bolt sorai egy keretben, a Bolt / Cím / Cég cella boltonként egyszer (összevonva),
+     a boltok között hézag; a bolt neve görgetéskor a csoport tetején marad */
+  .tabla { --keret: #9db4cc; }
+  .tabla td.c-bolt, .tabla td.c-cim, .tabla td.c-ceg { vertical-align: top; background: #f8fafc; }
+  .tabla td.c-bolt { border-left: 2px solid var(--keret); }
+  .tabla td.c-bolt .ragad, .tabla td.c-cim .ragad, .tabla td.c-ceg .ragad { position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px) + 36px); display: block; padding: 4px 0; }
+  .tabla td.c-cim { color: var(--text); font-size: 12.5px; min-width: 130px; max-width: 180px; }
+  .tabla td.c-ceg { max-width: 150px; }
+  .tabla tr.gf td { border-top: 2px solid var(--keret); }
+  .tabla tr.gl td, .tabla td.gcell { border-bottom: 2px solid var(--keret); }
+  .tabla tr.g td:last-child { border-right: 2px solid var(--keret); }
+  .tabla tr.gf td.c-bolt { border-top-left-radius: 9px; } .tabla tr.gf td:last-child { border-top-right-radius: 9px; }
+  .tabla td.c-bolt.gcell { border-bottom-left-radius: 9px; } .tabla tr.gl td:last-child { border-bottom-right-radius: 9px; }
+  .tabla tbody tr.koz td { height: 10px; padding: 0; border: 0; background: var(--panel); }
+  .tabla tbody tr.koz:hover td { background: var(--panel); }
+  .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-cim, .tabla tr.g:hover td.c-ceg { background: #f8fafc; }
   /* az összesítő széles: a bolt neve, a cég és a kategória egy sorban */
   body.szeles main, body.szeles header.top .in, body.szeles footer { max-width: 1480px; }
   @media (min-width: 761px) {
     .tabla .bolt { white-space: nowrap; }
     /* fejléc középre; a Bolt oszlop balra, a többi középre */
     .tabla th, .tabla td { text-align: center; }
-    .tabla td:first-child { text-align: left; }
+    .tabla td.c-bolt, .tabla td.c-cim { text-align: left; }
   }
-  @media (min-width: 1200px) { .tabla td:nth-child(1), .tabla td:nth-child(2) { white-space: nowrap; } }
-  @media (min-width: 1400px) { .tabla td:nth-child(3) { white-space: nowrap; } }
+  @media (min-width: 1200px) { .tabla td.c-bolt { white-space: nowrap; } }
+  @media (min-width: 1680px) { .tabla td.c-kat { white-space: nowrap; } }
   @media (min-width: 761px) and (max-width: 1199px) { .tabla td.d { white-space: normal; } }
   footer { max-width: 1120px; margin: 4px auto 28px; padding: 0 16px; color: var(--muted); font-size: 12.5px; }
   footer .jel { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
@@ -221,6 +270,11 @@
     .tabla tr { display: block; border-bottom: 1px solid var(--line); padding: 8px 6px; }
     .tabla td { display: block; border: 0; padding: 2px 10px; }
     .tabla td.ures { display: none; }
+    .tabla tr.g td { border: 0 !important; border-radius: 0 !important; background: none; }
+    .tabla tr.gf { border-top: 2px solid var(--keret); }
+    .tabla td.c-bolt .ragad, .tabla td.c-cim .ragad, .tabla td.c-ceg .ragad { position: static; padding: 0; }
+    .tabla td.c-cim { max-width: none; color: var(--muted); }
+    .tabla tbody tr.koz { display: none; }
   }
   @media (max-width: 560px) {
     .sor { grid-template-columns: minmax(0, 1fr) auto; }
@@ -255,7 +309,7 @@
 <main id="foresz" class="">
   <div class="fej">
     <i class="ti ti-table ikon" id="fejikon" aria-hidden="true"></i>
-    <div class="nev"><h1 id="cim">Összesített nyilvántartás</h1><p class="cegsor" id="cegsor" hidden></p><p class="al" id="al">Könyvelői nézet · minden bolt tételei és bankterminálja</p></div>
+    <div class="nev"><h1 id="cim">Összesített nyilvántartás</h1><p class="cegsor" id="cegsor" hidden></p><p class="cimsor" id="cimsor" hidden></p><p class="al" id="al">Könyvelői nézet · minden bolt tételei és bankterminálja</p></div>
     <div class="valaszt"><label for="bolt">Nézet / bolt</label><select id="bolt" disabled><option>Betöltés…</option></select></div>
     <button id="vissza" class="gomb kicsi vissza" type="button" hidden><i class="ti ti-arrow-left" aria-hidden="true"></i>Vissza a teljes nézetre</button>
     <div id="fejszuro" class="fejszuro" hidden></div>
@@ -291,6 +345,55 @@
     if (!v || !v.ok) throw new Error(v && v.hiba ? v.hiba : 'Ismeretlen hiba');
     return v.adat;
   };
+  // ---------------- töltőképernyő: lépések (kapcsolódás → lekérés → feldolgozás → megjelenítés) és százalék
+  // A szerver válaszának mérete előre nem ismert (darabolt átvitel), ezért a százalék lépésenként becsült: minden lépés a saját
+  // sávszakaszán belül lassulva halad, a válasz megérkezésekor a következő lépésre ugrik, a végén 100%.
+  const TOLTO_HATAR = [0, 10, 84, 95, 100], TOLTO_TAU = [700, 3500, 400, 300];
+  let indulTolto = null;
+  function tolto(fajta, nev) {
+    const lepesek = fajta === 'bolt'
+      ? ['Kapcsolódás a nyilvántartáshoz', 'A bolt dokumentumainak lekérése', 'Adatok feldolgozása', 'Dokumentumok megjelenítése']
+      : ['Kapcsolódás a nyilvántartáshoz', 'Az összesítő lekérése (minden bolt, minden tétel)', 'Adatok feldolgozása', 'Táblázat megjelenítése'];
+    const cim = fajta === 'bolt' ? (nev ? nev + ' – dokumentumok betöltése' : 'A bolt dokumentumainak betöltése') : 'Az összesített nyilvántartás betöltése';
+    $('lista').innerHTML = '<div class="tolto" role="status" aria-live="polite">' +
+      '<div class="tolto-fej"><span class="tolto-ikon"><i class="ti ' + (fajta === 'bolt' ? 'ti-building-store' : 'ti-table') + '" aria-hidden="true"></i></span>' +
+      '<div class="tolto-szoveg"><div class="tolto-cim">' + esc(cim) + '</div><div class="tolto-al">Élő adatok a nyilvántartásból – ez néhány másodpercig tarthat.</div></div>' +
+      '<div class="tolto-pct">0%</div></div>' +
+      '<div class="tolto-sav" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tolto-tolt"></div></div>' +
+      '<ol class="tolto-lepesek">' + lepesek.map((l) => '<li><span class="jel"></span><span>' + esc(l) + '</span><span class="ido"></span></li>').join('') + '</ol>' +
+      '<div class="tolto-labl"><i class="ti ti-shield-check" aria-hidden="true"></i>Az adatok közvetlenül a felülvizsgálati nyilvántartásból érkeznek.</div></div>';
+    const el = $('lista').querySelector('.tolto'), li = [...el.querySelectorAll('.tolto-lepesek li')];
+    const pctEl = el.querySelector('.tolto-pct'), tolt = el.querySelector('.tolto-tolt'), sav = el.querySelector('.tolto-sav');
+    let i = -1, t0 = Date.now(), p = 0;
+    const kiir = () => { const v = Math.floor(p); pctEl.textContent = v + '%'; tolt.style.width = p + '%'; sav.setAttribute('aria-valuenow', v); };
+    const ora = setInterval(() => {
+      if (!el.isConnected) { clearInterval(ora); return; }
+      if (i >= 0 && i < lepesek.length) {
+        const lo = TOLTO_HATAR[i], hi = TOLTO_HATAR[i + 1], f = 1 - Math.exp(-(Date.now() - t0) / TOLTO_TAU[i]);
+        p = Math.max(p, lo + (hi - lo) * 0.96 * f);
+        const mp = Math.floor((Date.now() - t0) / 1000);
+        if (mp >= 2) li[i].querySelector('.ido').textContent = mp + ' mp';
+      }
+      kiir();
+    }, 90);
+    const ctl = {
+      fajta,
+      lep(n) {
+        for (let k = 0; k < li.length; k++) {
+          li[k].classList.toggle('kesz', k < n); li[k].classList.toggle('fut', k === n);
+          if (k < n) li[k].querySelector('.jel').innerHTML = '<i class="ti ti-check" aria-hidden="true"></i>';
+        }
+        if (n > i) { p = Math.max(p, TOLTO_HATAR[Math.min(n, lepesek.length)]); i = n; t0 = Date.now(); kiir(); }
+      },
+      szunet: () => new Promise((ok) => requestAnimationFrame(() => setTimeout(ok, 140))),
+      kesz() {
+        ctl.lep(lepesek.length); p = 100; kiir(); el.classList.add('kesz'); clearInterval(ora);
+        return new Promise((ok) => setTimeout(ok, 280));
+      },
+    };
+    return ctl;
+  }
+
   const pont = (d) => d && /^\d{4}\.\d{2}\.\d{2}$/.test(d) ? d + '.' : (d || '');
   const ig = (d) => d ? d + '-ig' : '';
   let kert = 0, ossz = null;
@@ -458,6 +561,8 @@
   }
 
   async function indul() {
+    indulTolto = tolto(KEZDO ? 'bolt' : 'ossz', KEZDO);
+    indulTolto.lep(0);
     try {
       const r = await hivas('boltLista');
       const sel = $('bolt');
@@ -481,12 +586,14 @@
     document.body.classList.add('szeles');
     $('fejikon').className = 'ti ti-table ikon';
     $('cim').textContent = 'Összesített nyilvántartás';
-    $('cegsor').hidden = true;
+    $('cegsor').hidden = true; $('cimsor').hidden = true;
     $('al').textContent = 'Könyvelői nézet · minden bolt tételei és bankterminálja';
-    $('lista').innerHTML = '<div class="info"><span class="spin"></span> Az összesítő betöltése…</div>';
+    let t = indulTolto; indulTolto = null;
+    if (!ossz) { if (!t || t.fajta !== 'ossz') t = tolto('ossz'); t.lep(1); } else t = null;
     try {
       if (!ossz) ossz = await hivas('osszesito');
       if (sajat !== kert) return;
+      if (t) { t.lep(2); await t.szunet(); t.lep(3); await t.szunet(); await t.kesz(); if (sajat !== kert) return; }
       $('al').textContent = 'Könyvelői nézet · minden bolt tételei és bankterminálja · frissítve: ' + ossz.frissitve;
       // szűrők a rögzített fejlécben; a táblázat a lappal görög
       $('fejszuro').innerHTML = '<div class="szurok">' +
@@ -500,7 +607,7 @@
         '<div class="talalat"><span id="db"></span><span>Kattints a bolt nevére a bolt részletes oldalához.</span></div>';
       $('fejszuro').hidden = false;
       fejMeret();
-      $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
+      $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt</th><th>Cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
         '<th>Dátum</th><th>Érvényes</th><th>Állapot</th><th>Letöltés</th></tr></thead><tbody id="tsor"></tbody></table></section>';
       $('q').oninput = szur; $('fceg').onchange = () => { boltSzuroCeghez(); szur(); }; $('fbolt').onchange = szur; $('fkat').onchange = szur;
       szur();
@@ -512,6 +619,8 @@
     $('fbolt').innerHTML = '<option value="">Minden bolt</option>' + l.map((b) => '<option>' + esc(b.nev) + '</option>').join('');
     if (l.some((b) => b.nev === v)) $('fbolt').value = v;
   }
+  /** A bolt címe a Boltok lapról (a megszűnt boltoké is). */
+  const boltCim = (b) => (ossz && ossz.cimek && ossz.cimek[b]) || '';
   const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   /** Az összesítő állapotjelvénye ikonnal (mint a bolt oldalán); a kivont eszköz a saját színével (átadva, eladva, leselejtezve). */
   function allapotJel(s) {
@@ -527,22 +636,28 @@
       if (b && s.bolt !== b) return false;
       if (k === KIVONT ? !s.kivont : k && s.kat !== k) return false;
       if (!szavak.length) return true;
-      const t = norm([s.bolt, s.ceg, s.kat, s.cim, s.azon, s.azon2, s.eszk, s.reszlet, s.datum, s.kov, s.allapot].join(' '));
+      const t = norm([s.bolt, boltCim(s.bolt), s.ceg, s.kat, s.cim, s.azon, s.azon2, s.eszk, s.reszlet, s.datum, s.kov, s.allapot].join(' '));
       return szavak.every((w) => t.indexOf(w) >= 0);
     });
     $('db').textContent = l.length + ' tétel' + (l.length !== ossz.sorok.length ? ' (összesen ' + ossz.sorok.length + ')' : '');
-    $('tsor').innerHTML = l.length ? l.map((s) => {
+    // boltonkénti csoportok: az egymás utáni, azonos boltú sorok (a lista boltonként rendezett)
+    const csop = l.map((s, i) => { let n = 1; if (i && l[i - 1].bolt === s.bolt) return 0; while (i + n < l.length && l[i + n].bolt === s.bolt) n++; return n; });
+    const utolso = l.map((s, i) => i === l.length - 1 || l[i + 1].bolt !== s.bolt);
+    $('tsor').innerHTML = l.length ? l.map((s, i) => {
       // kivont eszköz: a megjegyzésből röviden az új helye vagy az esemény dátuma; az utolsó felülvizsgálat a Dátum oszlopba kerül
       const kv = s.kivont ? kivontAdat({ megj: s.reszlet }) : null;
       const kvSor = kv ? [kv.hely ? '→ ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
       const datum = s.datum ? (s.uzembe ? 'üzembe h.: ' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
       // még fel nem vett gép (nincs azonosító, a tétel neve a kategória): mint a bolt oldalán, „Még nincs rögzített …”
       const cim = !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
-      return '<tr>' +
-      '<td>' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
-        : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') + '</td>' +
-      '<td>' + esc(s.ceg) + '</td>' +
-      '<td><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
+      const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
+      const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
+          : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') + '</span></td>' +
+        '<td class="c-cim' + gcell + (boltCim(s.bolt) ? '' : ' ures') + '"' + gc + '><span class="ragad">' + esc(boltCim(s.bolt)) + '</span></td>' +
+        '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
+      return (n && i ? '<tr class="koz" aria-hidden="true"><td colspan="10"></td></tr>' : '') +
+      '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + '">' + fej +
+      '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
         (kv ? (kvSor ? '<span class="kv">' + esc(kvSor) + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
@@ -554,12 +669,17 @@
       '<td class="d' + (s.terminal || s.kivont ? ' ures' : '') + '">' + esc(s.terminal || s.kivont ? '' : s.lejaratNelkul ? 'lejárat nélkül' : (s.kov ? ig(s.kov) : '–')) + '</td>' +
       '<td>' + allapotJel(s) + '</td>' +
       '<td>' + (s.id ? '<span class="gombok">' + nezGomb(s.id) + '<button class="gomb kicsi" data-id="' + esc(s.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>' : '') + '</td>' +
-      '</tr>'; }).join('') : '<tr><td colspan="9" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
+      '</tr>'; }).join('') : '<tr><td colspan="10" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
     gombokKot($('tsor'));
     $('tsor').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
   }
 
   // ---------------- egy bolt nézete
+  /** A bolt címe a fejlécben, a cégnév alatt (térkép-tű ikonnal). */
+  function cimsor(c) {
+    $('cimsor').innerHTML = c ? '<i class="ti ti-map-pin" aria-hidden="true"></i>' + esc(c) : '';
+    $('cimsor').hidden = !c;
+  }
   async function boltMutat(nev) {
     const sajat = ++kert;
     $('foresz').classList.add('keskeny');
@@ -571,13 +691,19 @@
     const ismert = ossz && ossz.boltok.filter((b) => b.nev === nev)[0];
     $('cegsor').textContent = ismert ? ismert.ceg : '';
     $('cegsor').hidden = !ismert;
+    cimsor(ismert ? ismert.cim : '');
     $('al').textContent = 'Felülvizsgálati dokumentumok';
-    $('lista').innerHTML = '<div class="info"><span class="spin"></span> A dokumentumok betöltése…</div>';
+    let t = indulTolto; indulTolto = null;
+    if (!t || t.fajta !== 'bolt') t = tolto('bolt', nev);
+    t.lep(1);
     try {
       const r = await hivas('boltAdat', nev);
       if (sajat !== kert) return;
+      t.lep(2); await t.szunet(); t.lep(3); await t.szunet(); await t.kesz();
+      if (sajat !== kert) return;
       $('cegsor').textContent = r.ceg || '';
       $('cegsor').hidden = !r.ceg;
+      cimsor(r.cim || '');
       $('al').textContent = 'Felülvizsgálati dokumentumok · frissítve: ' + r.frissitve;
       $('cim').innerHTML = esc(r.bolt) + (r.allapot && r.allapot !== 'Aktív' ? '<span class="badge b-info">' + esc(r.allapot) + '</span>' : '');
       rajzol(r);
