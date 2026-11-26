@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795737434102";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795737573095";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -1241,12 +1241,12 @@
 
   /**
    * A korábbi dokumentumok lenyitható listájának címe (2026.11.26., felhasználó: a „Korábbiak (4)” nem könyvelőbarát): mi van benne,
-   * hány darab és melyik időszakból – pl. „Régebbi, azóta újabbal felváltott dokumentumok (4 db, 2021–2025)”.
+   * hány darab és melyik időszakból – pl. „Régebbi dokumentumok (4 db, 2021–2025)”.
    */
   function korabbiCim(l) {
     const evek = (l || []).map((d) => (String(d.datum || '').match(/^(\d{4})/) || [])[1]).filter(Boolean).map(Number);
     const tol = evek.length ? Math.min.apply(null, evek) : 0, ig = evek.length ? Math.max.apply(null, evek) : 0;
-    return 'Régebbi, azóta újabbal felváltott dokumentumok (' + l.length + ' db' + (tol ? ', ' + (tol === ig ? tol : tol + '–' + ig) : '') + ')';
+    return 'Régebbi dokumentumok (' + l.length + ' db' + (tol ? ', ' + (tol === ig ? tol : tol + '–' + ig) : '') + ')';
   }
   /** A Tétel címe: az első „ – ” helyén új sor (2026.11.26.: „Roxin szerződés 2026” / „bővített (2026. június)”), középre igazítva. */
   const tetelCim = (c) => { const t = String(c || ''), i = t.indexOf(' – '); return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<br>' + esc(t.slice(i + 3)); };
