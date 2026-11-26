@@ -200,8 +200,9 @@
   .talalat { margin-top: 6px; color: var(--muted); font-size: 12.5px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
   .kartya.tablakartya { overflow: visible; }
   .tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
-  .tabla th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); background: #f3f6f9; padding: 7px 8px;
-    border-bottom: 1px solid var(--line); border-right: 1px solid #e3e8ee; position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px)); z-index: 2; }
+  /* fejléc sötétkék, fehér betűvel (2026.11.26.) */
+  .tabla th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #fff; background: var(--brand); font-weight: 700; padding: 8px 8px;
+    border-bottom: 1px solid var(--brand); border-right: 1px solid rgba(255, 255, 255, .16); position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px)); z-index: 2; }
   .tabla td { padding: 4px 8px; border-bottom: 1px solid #e6ebf0; border-right: 1px solid #eef1f4; vertical-align: middle; line-height: 1.35; }
   .tabla th:last-child, .tabla td:last-child { border-right: 0; text-align: center; }
   .tablakartya .tabla th:first-child { border-top-left-radius: 11px; } .tablakartya .tabla th:last-child { border-top-right-radius: 11px; }
