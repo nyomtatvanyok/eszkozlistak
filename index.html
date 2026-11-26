@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795714491363";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795714552419";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -1494,7 +1494,7 @@
           // a tulajdonos fiókját más nem módosíthatja és nem törölheti (a szerver is ellenőrzi) – nála nincsenek gombok
           (x.tulaj && !x.en ? '' : '<div class="fmgombok">' +
             '<button type="button" class="gomb kicsi" data-m="jelszo"><i class="ti ti-key" aria-hidden="true"></i>Jelszó módosítása</button>' +
-            (x.en ? '' : '<button type="button" class="gomb kicsi" data-m="admin">' + (x.admin ? 'Admin jog elvétele' : 'Admin jog') + '</button>') +
+            (x.en ? '' : '<button type="button" class="gomb kicsi" data-m="admin">' + (x.admin ? 'Admin jog visszavonása' : 'Admin jog') + '</button>') +
             (x.en ? '' : '<button type="button" class="gomb kicsi veszely" data-m="torol"><i class="ti ti-trash" aria-hidden="true"></i>' +
               (torlesKerdes === x.nev ? 'Biztosan törlöd?' : 'Törlés') + '</button>') +
           '</div>') +
@@ -1529,7 +1529,7 @@
       }
       if (mit === 'admin') return fut(el.querySelector('[data-m=admin]'), async () => {
         lista = await adminHivas('mentes', { nev: x.nev, admin: !x.admin }); rajzol();
-        uzen(x.nev + (x.admin ? ': az adminisztrátori jog elvéve.' : ': mostantól adminisztrátor.'));
+        uzen(x.nev + (x.admin ? ': az adminisztrátori jog visszavonva.' : ': mostantól adminisztrátor.'));
       });
       if (mit === 'torol') {
         // kétlépcsős törlés: az első kattintás rákérdez, a második (5 mp-en belül) töröl
