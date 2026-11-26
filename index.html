@@ -407,6 +407,16 @@
   footer .kapcs .gomb { text-decoration: none; min-height: 48px; padding: 10px 20px; font-size: 18px; color: #fff; }
   footer .kapcs .gomb i { font-size: 20px; }
   @media (max-width: 560px) { footer .kapcs .gomb { width: 100%; } footer .labkeret { padding: 14px; } }
+  .talalat .bal { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .talalat .torol { min-height: 36px; font-size: 15px; padding: 5px 12px; }
+  .talalat .torol:disabled { opacity: .45; cursor: default; }
+  /* a Cég oszlop függőlegesen és vízszintesen is középen (2026.11.26.) */
+  .tabla td.c-ceg { vertical-align: middle; text-align: center; }
+  .tabla td.c-ceg .ragad { position: static; }
+  /* megszűnt bolt: tájékoztató kártya, az utolsó dokumentum kiemelve */
+  .zartinfo p { margin: 0; padding: 12px 16px; font-size: 16px; color: var(--kakao); }
+  .reg.utolso { background: #fdf9f1; }
+  .reg .azon { margin-left: 2px; }
   .talalat .tipp { display: inline-flex; align-items: center; gap: 6px; color: var(--sugo); }
   .talalat .tipp i { color: var(--barna); font-size: 16px; }
 </style>
@@ -637,23 +647,23 @@
     const dokSor = (d) => '<div class="hd"><i class="ti ti-file-text" aria-hidden="true"></i><span class="d">' + esc(pont(d.datum) || '–') + '</span><span class="n">' + esc(d.dok) + '</span>' +
       (d.id ? '<span class="gombok">' + nezGomb(d.id) + '<button class="gomb kicsi" data-id="' + esc(d.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>'
         : '<span class="zar" title="Másik cég dokumentuma – innen nem tölthető le"><i class="ti ti-lock" aria-hidden="true"></i></span>') + '</div>';
-    const jelen = '<li class="most"><div class="hb">Jelenleg: ' + esc(most.bolt) + cegJel(most.ceg) + '</div>' +
-      (most.uzembe ? '<div class="hr">Üzembe helyezve itt: <b>' + esc(pont(most.uzembe)) + '</b></div>' : '') +
+    const jelen = '<li class="most"><div class="hb">Jelenlegi telephely: ' + esc(most.bolt) + cegJel(most.ceg) + '</div>' +
+      (most.uzembe ? '<div class="hr">Üzembe helyezés dátuma: <b>' + esc(pont(most.uzembe)) + '</b></div>' : '') +
       (e.itt || []).map(dokSor).join('') + '</li>';
     const korabbi = e.helyek.map((h) => {
       const d = kivontAdat(h), kv = KIV_ALL[h.allapot];
       const jel = kv ? '<span class="badge b-' + kv[0] + '"><i class="ti ti-' + kv[1] + '" aria-hidden="true"></i>' + esc(h.allapot) + '</span>' : eszkJel(h.allapot);
       const sorok = [];
       if (d.datum) sorok.push((h.allapot === 'Leselejtezve' ? 'Selejtezve' : h.allapot === 'Eladva' ? 'Eladva' : 'Átadva') + ': <b>' + esc(pont(d.datum)) + '</b>');
-      if (d.hely) sorok.push((d.hely.bolt === most.bolt ? 'Innen került ide' : 'Innen került: ' + boltLink(d.hely.bolt) + cegJel(d.hely.ceg)) + (d.hely.all ? ' · ' + esc(d.hely.all) : ''));
+      if (d.hely) sorok.push('Átadva ide: ' + (d.hely.bolt === most.bolt ? '<b>' + esc(most.bolt) + '</b>' : boltLink(d.hely.bolt) + cegJel(d.hely.ceg)) + (d.hely.all ? ' · ' + esc(d.hely.all) : ''));
       const utolso = d.utolso || h.utolso;
-      if (utolso) sorok.push('Utolsó felülvizsgálat itt: <b>' + esc(pont(utolso)) + '</b>');
+      if (utolso) sorok.push('Utolsó felülvizsgálat ezen a telephelyen: <b>' + esc(pont(utolso)) + '</b>');
       if (d.megj.length) sorok.push(esc(d.megj.join(' · ')));
-      return '<li><div class="hb">' + boltLink(h.bolt) + cegJel(h.ceg) + jel + '</div>' + sorok.map((x) => '<div class="hr">' + x + '</div>').join('') + (h.doks || []).map(dokSor).join('') + '</li>';
+      return '<li><div class="hb">Korábbi telephely: ' + boltLink(h.bolt) + cegJel(h.ceg) + jel + '</div>' + sorok.map((x) => '<div class="hr">' + x + '</div>').join('') + (h.doks || []).map(dokSor).join('') + '</li>';
     }).join('');
     // összecsukva az útja egy sorban, a legrégebbitől: „Bp, Nyugati tér → Kőszeg, Tesco → ide” (a boltnevekben vessző van, ezért nyíl)
-    const ut = e.helyek.map((h) => h.bolt).reverse(), hol = (ut.length > 3 ? ['…'].concat(ut.slice(-3)) : ut).concat('ide').join(' → ');
-    return '<details class="elozmeny"><summary><i class="ti ti-chevron-right" aria-hidden="true"></i>Előélet <span class="hol">· ' + esc(hol) + '</span></summary>' +
+    const ut = e.helyek.map((h) => h.bolt).reverse(), hol = (ut.length > 3 ? ['…'].concat(ut.slice(-3)) : ut).concat(most.bolt).join(' → ');
+    return '<details class="elozmeny"><summary><i class="ti ti-chevron-right" aria-hidden="true"></i>Eszközmozgások <span class="hol">· ' + esc(hol) + '</span></summary>' +
       '<ol class="idovonal">' + jelen + korabbi + '</ol></details>';
   }
 
@@ -695,11 +705,12 @@
       const r = await hivas('boltLista');
       const sel = $('bolt');
       sel.innerHTML = '<option value="' + OSSZ + '">Összesített nyilvántartás (könyvelői nézet)</option><optgroup label="Boltok">' +
-        r.boltok.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>';
+        r.boltok.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' +
+        ((r.zartak || []).length ? '<optgroup label="Megszűnt / átadott boltok (archív)">' + r.zartak.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>' : '');
       sel.disabled = false;
       sel.onchange = () => valt(sel.value);
       $('vissza').onclick = () => { sel.value = OSSZ; valt(OSSZ); window.scrollTo(0, 0); };
-      const kezdo = KEZDO && r.boltok.indexOf(KEZDO) >= 0 ? KEZDO : OSSZ;
+      const kezdo = KEZDO && (r.boltok.indexOf(KEZDO) >= 0 || (r.zartak || []).indexOf(KEZDO) >= 0) ? KEZDO : OSSZ;
       sel.value = kezdo;
       valt(kezdo);
     } catch (e) { hiba('Az oldal most nem tölthető be. Próbáld újra pár perc múlva. (' + e.message + ')'); $('lista').innerHTML = ''; }
@@ -732,11 +743,12 @@
             (ossz.kategoriak || ossz.sorok.map((s) => s.kat).filter((k, i, l) => l.indexOf(k) === i)).map((k) => '<option>' + esc(k) + '</option>').join('') +
             (ossz.sorok.some((s) => s.kivont) ? '<option value="' + KIVONT + '">Eladott, selejtezett, átadott eszközök</option>' : '') + '</select></div>' +
         '</div>' +
-        '<div class="talalat"><span id="db"></span><span class="tipp"><i class="ti ti-pointer" aria-hidden="true"></i>A bolt nevére kattintva megnyílik a bolt adatlapja – minden felülvizsgálat, eszköz és dokumentum egy helyen, részletesen.</span></div>';
+        '<div class="talalat"><span class="bal"><span id="db"></span><button type="button" class="gomb kicsi torol" id="szurotorol" disabled><i class="ti ti-filter-off" aria-hidden="true"></i>Szűrők törlése</button></span><span class="tipp"><i class="ti ti-pointer" aria-hidden="true"></i>A bolt nevére kattintva megnyílik a bolt adatlapja – minden felülvizsgálat, eszköz és dokumentum egy helyen, részletesen.</span></div>';
       $('fejszuro').hidden = false;
       fejMeret();
       $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt / cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
         '<th>Dátum</th><th>Érvényes</th><th>Állapot</th><th>Letöltés</th></tr></thead><tbody id="tsor"></tbody></table></section>';
+      $('szurotorol').onclick = () => { $('q').value = ''; $('fceg').value = ''; boltSzuroCeghez(); $('fbolt').value = ''; $('fkat').value = ''; szur(); $('q').focus(); };
       $('q').oninput = szur; $('fceg').onchange = () => { boltSzuroCeghez(); szur(); }; $('fbolt').onchange = szur; $('fkat').onchange = szur;
       szur();
     } catch (e) { if (sajat === kert) { $('lista').innerHTML = ''; hiba('Az összesítő most nem tölthető be. Próbáld újra. (' + e.message + ')'); } }
@@ -775,6 +787,7 @@
       const t = norm([s.bolt, boltCim(s.bolt), s.ceg, s.kat, s.cim, s.azon, s.azon2, s.eszk, s.reszlet, s.datum, s.kov, s.allapot].join(' '));
       return szavak.every((w) => t.indexOf(w) >= 0);
     });
+    $('szurotorol').disabled = !(szavak.length || c || b || k);
     $('db').textContent = l.length + ' tétel' + (l.length !== ossz.sorok.length ? ' (összesen ' + ossz.sorok.length + ')' : '');
     // boltonkénti csoportok: az egymás utáni, azonos boltú sorok (a lista boltonként rendezett)
     const csop = l.map((s, i) => { let n = 1; if (i && l[i - 1].bolt === s.bolt) return 0; while (i + n < l.length && l[i + n].bolt === s.bolt) n++; return n; });
@@ -789,7 +802,7 @@
       const kulsoHely = !s.kivont && !s.terminal && !s.azon && kulsoTetel(s);
       const cim = !kulsoHely && !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
-      const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
+      const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a><span class="sub zartb">megszűnt / átadott bolt</span>'
           : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') +
           (boltCim(s.bolt) ? '<span class="bcim">' + cimKetSor(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
@@ -842,20 +855,34 @@
       $('cegsor').hidden = !r.ceg;
       cimsor(r.cim || '');
       $('al').textContent = 'Felülvizsgálati dokumentumok · frissítve: ' + r.frissitve;
-      $('cim').innerHTML = esc(r.bolt) + (r.allapot && r.allapot !== 'Aktív' ? '<span class="badge b-info">' + esc(r.allapot) + '</span>' : '');
+      $('cim').innerHTML = esc(r.bolt) + (r.allapot && r.allapot !== 'Aktív' ? '<span class="badge ' + (r.zart ? 'b-gray' : 'b-info') + '">' + esc(r.allapot) + '</span>' : '');
+      if (r.zart) $('al').textContent = 'Archív adatok és dokumentumok · frissítve: ' + r.frissitve;
       rajzol(r);
     } catch (e) { if (sajat === kert) { $('lista').innerHTML = ''; hiba('A bolt adatai most nem tölthetők be. Próbáld újra. (' + e.message + ')'); } }
   }
 
+  /** Megszűnt / átadott bolt (2026.11.26.): tájékoztató, archív dokumentumok kategóriánként (lejártak is letölthetők). */
+  function zartResz(r) {
+    const info = '<section class="kartya zartinfo"><div class="kfej">' + ikonCsempe('archive', true) + '<h2>Megszűnt / átadott bolt – archív adatok</h2></div>' +
+      '<p>Ez a bolt már nem a mi üzemeltetésünkben működik. Az itt látható adatok archívak: a bolt korábbi dokumentumai (a lejártak is) ' +
+      'megtekinthetők és letölthetők, alul pedig az látszik, mi lett az eszközeivel – hova adtuk át, mit adtunk el vagy selejteztünk.</p></section>';
+    const archiv = (r.archiv || []).map((k) => '<section class="kartya"><div class="kfej">' + ikonCsempe(k.ikon, true) + '<h2>' + esc(k.kat) + '</h2><span class="db">' + k.doks.length + '</span></div>' +
+      k.doks.map((d, i) => '<div class="reg' + (i ? '' : ' utolso') + '"><span class="d">' + esc(pont(d.datum) || '–') + '</span><span>' + esc(d.dok) + (d.azon ? ' · <span class="azon">' + esc(d.azon) + '</span>' : '') +
+        (i ? '' : ' <span class="badge b-info">utolsó dokumentum</span>') + '</span>' +
+        '<span class="gombok">' + nezGomb(d.id) + '<button class="gomb kicsi" data-id="' + esc(d.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span></div>').join('') +
+      '</section>');
+    return [info].concat(archiv.length ? archiv : ['<div class="info">Ehhez a bolthoz nincs archív dokumentum a tartalomjegyzékben.</div>']);
+  }
+
   function rajzol(r) {
-    const kartyak = r.kartyak.map((k) => {
+    const kartyak = (r.zart ? zartResz(r) : []).concat(r.kartyak.map((k) => {
       const sorok = k.sorok.map((s) => tetelSor(s, k, r.ceg, r.bolt)).join('');
       const kor = k.korabbiak.length ? '<details><summary><i class="ti ti-chevron-right" aria-hidden="true"></i>Korábbiak (' + k.korabbiak.length + ')</summary>' +
         k.korabbiak.map((d) => '<div class="reg"><span class="d">' + esc(pont(d.datum) || '–') + '</span><span>' + esc(d.dok) + (d.azon ? ' · ' + esc(d.azon) : '') + (d.ceg ? '<span class="ceg">' + esc(r.ceg) + '</span>' : '') + '</span>' +
           '<span class="gombok">' + nezGomb(d.id) + '<button class="gomb kicsi" data-id="' + esc(d.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span></div>').join('') + '</details>' : '';
       // eszközkategóriánál a fejlécben a darabszám (mint a Bankterminálok és a kivont eszközök kártyáján)
       return '<section class="kartya"><div class="kfej">' + ikonCsempe(k.ikon, true) + '<h2>' + esc(k.kat) + '</h2>' + (k.eszkoz && k.sorok.length ? '<span class="db">' + k.sorok.length + '</span>' : '') + '</div>' + sorok + kor + '</section>';
-    });
+    }));
     // bankterminálok (a bolt eszközei, dokumentum nélkül)
     if (r.terminalok && r.terminalok.length) kartyak.push(terminalKartya(r.terminalok, r.bolt, r.ceg));
     // eladott, leselejtezett eszközök (a korábbi gépek, dokumentumukkal, ha van)
