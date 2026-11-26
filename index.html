@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795714211161";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795714491363";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -544,7 +544,7 @@
   body.modalnyitva { overflow: hidden; }
   .fmodal { position: fixed; inset: 0; z-index: 50; background: rgba(43, 22, 8, .45); display: flex; align-items: flex-start; justify-content: center;
     padding: 40px 16px; overflow: auto; }
-  .fmablak { width: 100%; max-width: 760px; background: #fff; border: 4px solid var(--barna); border-radius: 18px; box-shadow: 0 20px 50px rgba(43, 22, 8, .35); color: var(--kakao); }
+  .fmablak { width: 100%; max-width: 640px; background: #fff; border: 4px solid var(--barna); border-radius: 18px; box-shadow: 0 20px 50px rgba(43, 22, 8, .35); color: var(--kakao); }
   .fmfej { display: flex; align-items: center; gap: 14px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: var(--liszt); border-radius: 14px 14px 0 0; }
   .fmikon { width: 52px; height: 52px; border-radius: 14px; background: var(--krem); color: var(--barna); display: grid; place-items: center; font-size: 28px; flex: none;
     box-shadow: inset 0 0 0 1px var(--morzsa); }
@@ -568,6 +568,12 @@
   .fmelem:nth-child(even) { background: #fffdf9; }
   .fmnev { flex: 1; min-width: 220px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 16.5px; }
   .fmnev > i { color: var(--barna); font-size: 18px; }
+  .fmnev { align-items: flex-start; flex-wrap: nowrap; min-width: 200px; }
+  .fmnev > i { margin-top: 3px; }
+  .fmnevb { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .fmnevb b { overflow-wrap: anywhere; }
+  .fmjelek { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fmjelek:empty { display: none; }
   .fmjel { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; padding: 2px 9px; border-radius: 6px; }
   .fmjel.admin { background: var(--krem); color: var(--barna); }
   .fmjel.en { background: #e8f3e2; color: #2e5e1e; }
@@ -1480,10 +1486,11 @@
       try { localStorage.setItem(LISTA_KULCS, JSON.stringify(lista.map((x) => x.nev))); } catch (e) { /* nem fontos */ }
       $('fmLista').innerHTML = '<div class="fmdb">' + lista.length + ' felhasználó</div>' + lista.map((x, i) =>
         '<div class="fmelem" data-i="' + i + '">' +
-          '<div class="fmnev"><i class="ti ti-user" aria-hidden="true"></i><b>' + esc(x.nev) + '</b>' +
+          // a jelvények a név alatt (2026.11.26., felhasználó: „ezek a nevek alatt legyenek, és így lehet keskenyebb is ez a felület”)
+          '<div class="fmnev"><i class="ti ti-user" aria-hidden="true"></i><div class="fmnevb"><b>' + esc(x.nev) + '</b><div class="fmjelek">' +
             (x.admin ? '<span class="fmjel admin"><i class="ti ti-shield-check" aria-hidden="true"></i>Adminisztrátor</span>' : '') +
             (x.tulaj ? '<span class="fmjel tulaj"><i class="ti ti-lock" aria-hidden="true"></i>Tulajdonos – védett fiók</span>' : '') +
-            (x.en ? '<span class="fmjel en">Te</span>' : '') + '</div>' +
+            (x.en ? '<span class="fmjel en">Te</span>' : '') + '</div></div></div>' +
           // a tulajdonos fiókját más nem módosíthatja és nem törölheti (a szerver is ellenőrzi) – nála nincsenek gombok
           (x.tulaj && !x.en ? '' : '<div class="fmgombok">' +
             '<button type="button" class="gomb kicsi" data-m="jelszo"><i class="ti ti-key" aria-hidden="true"></i>Jelszó módosítása</button>' +
