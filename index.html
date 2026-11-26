@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795733380773";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795734022969";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -226,7 +226,8 @@
   .tabla td.azon-o .a1 { white-space: nowrap; }
   .tabla td.azon-o .sub { font-size: 11.5px; }
   /* kivont eszköz a Tétel oszlopban: típus, alatta röviden az új helye / az esemény dátuma (a teljes megjegyzés a súgóban) */
-  .tabla .kv { display: block; color: var(--muted); font-size: 12px; }
+  .tabla .kv { display: inline; color: var(--muted); font-size: 12px; } /* (2026.11.26.: a név után, egy sorban, ha kifér) */
+  .tabla .kv .a1 { white-space: nowrap; }
   .tabla .zartb { display: block; font-size: 11.5px; }
   .tabla .gomb.kicsi { padding: 3px 9px; }
   .tabla .eszk { font-size: 11.5px; padding: 0 7px; margin-left: 6px; }
@@ -1211,11 +1212,11 @@
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
-        (kv ? (kvSor ? '<span class="kv">' + esc(kvSor) + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
+        (kv ? (kvSor ? ' <span class="kv">' + kvSor.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join('<span class="sep"> · </span>') + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
       // azonosító fix szélességű betűvel; bankterminálnál a TID alatt kisebben az S/N és a MID
       '<td class="d azon-o' + (s.azon ? '' : ' ures') + '"><span class="a1">' + esc(s.azon || '') + '</span>' + 
         // S/N és MID: csak a „ · ” helyén törhet (a „MID:” és a szám együtt marad)
-        (s.azon2 ? '<div class="sub">' + s.azon2.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join(' · ') + '</div>' : '') + '</td>' +
+        (s.azon2 ? '<div class="sub">' + s.azon2.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join('<span class="sep"> · </span>') + '</div>' : '') + '</td>' +
       '<td class="d' + (datum ? '' : ' ures') + '"' + (kv && kv.utolso && !s.datum ? ' title="Utolsó felülvizsgálat"' : '') + '>' + esc(datum || (s.terminal || s.kivont ? '' : '–')) + '</td>' +
       '<td class="d' + (s.terminal || s.kivont ? ' ures' : '') + '">' + esc(s.terminal || s.kivont ? '' : s.lejaratNelkul ? 'lejárat nélkül' : (s.kov ? ig(s.kov) : '–')) + '</td>' +
       '<td class="c-all">' + allapotJel(s) + '</td>' +
@@ -1225,8 +1226,27 @@
     const vegBolt = [...$('tsor').querySelectorAll('td.c-bolt')].pop();
     if (vegBolt) vegBolt.classList.add('veg');
     gombokKot($('tsor'));
+    sepIgazit($('tsor'));
     $('tsor').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
   }
+
+  /**
+   * A „ · ” elválasztó nem maradhat egyedül a sor végén (2026.11.26., felhasználó: „ha a sor végére csak a pont kerülne, ne legyen ott …
+   * dinamikusan”): a kirajzolás után megnézi, hol kezdődik új sor – ott az elválasztó helyére sortörés kerül. Átméretezéskor újraszámol.
+   */
+  function sepIgazit(gyoker) {
+    if (!gyoker) return;
+    gyoker.querySelectorAll('br.sepbr').forEach((b) => { const x = document.createElement('span'); x.className = 'sep'; x.textContent = ' · '; b.replaceWith(x); });
+    const csere = [];
+    gyoker.querySelectorAll('.sep').forEach((sep) => {
+      const e = sep.previousElementSibling, k = sep.nextElementSibling;
+      if (e && k && k.getBoundingClientRect().top > e.getBoundingClientRect().top + 3) csere.push(sep);
+    });
+    csere.forEach((sep) => { const b = document.createElement('br'); b.className = 'sepbr'; sep.replaceWith(b); });
+  }
+  let sepIdozito = null;
+  window.addEventListener('resize', () => { clearTimeout(sepIdozito); sepIdozito = setTimeout(() => sepIgazit($('tsor')), 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sepIgazit($('tsor')));
 
   // ---------------- egy bolt nézete
   /** A bolt címe a fejlécben, a cégnév alatt (térkép-tű ikonnal). */
