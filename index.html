@@ -224,10 +224,11 @@
   /* boltonkénti keret (2026.11.26.): a bolt sorai egy keretben, a Bolt / Cím / Cég cella boltonként egyszer (összevonva),
      a boltok között hézag; a bolt neve görgetéskor a csoport tetején marad */
   .tabla { --keret: #9db4cc; }
-  .tabla td.c-bolt, .tabla td.c-cim, .tabla td.c-ceg { vertical-align: top; background: #f8fafc; }
+  .tabla td.c-bolt, .tabla td.c-ceg { vertical-align: top; background: #f8fafc; }
   .tabla td.c-bolt { border-left: 2px solid var(--keret); }
-  .tabla td.c-bolt .ragad, .tabla td.c-cim .ragad, .tabla td.c-ceg .ragad { position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px) + 36px); display: block; padding: 4px 0; }
-  .tabla td.c-cim { color: var(--text); font-size: 12.5px; min-width: 130px; max-width: 180px; }
+  .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px) + 36px); display: block; padding: 4px 0; }
+  /* a bolt cellája: a név, alatta kisebben a cím (2026.11.26.: „a Bolt és a Cím legyen egy cellában”) */
+  .tabla td.c-bolt .bcim { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.3; margin-top: 1px; font-weight: 400; white-space: normal; max-width: 210px; }
   .tabla td.c-ceg { max-width: 150px; }
   .tabla tr.gf td { border-top: 2px solid var(--keret); }
   .tabla tr.gl td, .tabla td.gcell { border-bottom: 2px solid var(--keret); }
@@ -236,14 +237,14 @@
   .tabla td.c-bolt.gcell { border-bottom-left-radius: 9px; } .tabla tr.gl td:last-child { border-bottom-right-radius: 9px; }
   .tabla tbody tr.koz td { height: 10px; padding: 0; border: 0; background: var(--panel); }
   .tabla tbody tr.koz:hover td { background: var(--panel); }
-  .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-cim, .tabla tr.g:hover td.c-ceg { background: #f8fafc; }
+  .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-ceg { background: #f8fafc; }
   /* az összesítő széles: a bolt neve, a cég és a kategória egy sorban */
   body.szeles main, body.szeles header.top .in, body.szeles footer { max-width: 1480px; }
   @media (min-width: 761px) {
     .tabla .bolt { white-space: nowrap; }
     /* fejléc középre; a Bolt oszlop balra, a többi középre */
     .tabla th, .tabla td { text-align: center; }
-    .tabla td.c-bolt, .tabla td.c-cim { text-align: left; }
+    .tabla td.c-bolt { text-align: left; }
   }
   @media (min-width: 1200px) { .tabla td.c-bolt { white-space: nowrap; } }
   @media (min-width: 1680px) { .tabla td.c-kat { white-space: nowrap; } }
@@ -272,8 +273,7 @@
     .tabla td.ures { display: none; }
     .tabla tr.g td { border: 0 !important; border-radius: 0 !important; background: none; }
     .tabla tr.gf { border-top: 2px solid var(--keret); }
-    .tabla td.c-bolt .ragad, .tabla td.c-cim .ragad, .tabla td.c-ceg .ragad { position: static; padding: 0; }
-    .tabla td.c-cim { max-width: none; color: var(--muted); }
+    .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { position: static; padding: 0; }
     .tabla tbody tr.koz { display: none; }
   }
   @media (max-width: 560px) {
@@ -607,7 +607,7 @@
         '<div class="talalat"><span id="db"></span><span>Kattints a bolt nevére a bolt részletes oldalához.</span></div>';
       $('fejszuro').hidden = false;
       fejMeret();
-      $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt</th><th>Cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
+      $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt / cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
         '<th>Dátum</th><th>Érvényes</th><th>Állapot</th><th>Letöltés</th></tr></thead><tbody id="tsor"></tbody></table></section>';
       $('q').oninput = szur; $('fceg').onchange = () => { boltSzuroCeghez(); szur(); }; $('fbolt').onchange = szur; $('fkat').onchange = szur;
       szur();
@@ -652,10 +652,10 @@
       const cim = !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
       const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
-          : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') + '</span></td>' +
-        '<td class="c-cim' + gcell + (boltCim(s.bolt) ? '' : ' ures') + '"' + gc + '><span class="ragad">' + esc(boltCim(s.bolt)) + '</span></td>' +
+          : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') +
+          (boltCim(s.bolt) ? '<span class="bcim">' + esc(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
-      return (n && i ? '<tr class="koz" aria-hidden="true"><td colspan="10"></td></tr>' : '') +
+      return (n && i ? '<tr class="koz" aria-hidden="true"><td colspan="9"></td></tr>' : '') +
       '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + '">' + fej +
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
@@ -669,7 +669,7 @@
       '<td class="d' + (s.terminal || s.kivont ? ' ures' : '') + '">' + esc(s.terminal || s.kivont ? '' : s.lejaratNelkul ? 'lejárat nélkül' : (s.kov ? ig(s.kov) : '–')) + '</td>' +
       '<td>' + allapotJel(s) + '</td>' +
       '<td>' + (s.id ? '<span class="gombok">' + nezGomb(s.id) + '<button class="gomb kicsi" data-id="' + esc(s.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>' : '') + '</td>' +
-      '</tr>'; }).join('') : '<tr><td colspan="10" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
+      '</tr>'; }).join('') : '<tr><td colspan="9" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
     gombokKot($('tsor'));
     $('tsor').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
   }
