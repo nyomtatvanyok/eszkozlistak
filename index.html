@@ -8,11 +8,14 @@
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%231f4e79%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@800&display=swap">
 <style>
   :root {
-    --bg: #f4f6f9; --panel: #fff; --line: #dde3ea; --text: #1d2733; --muted: #66727f; --hint: #8a95a1;
-    --brand: #1f4e79; --brand-soft: #e8f0f8;
-    --ok: #2e5e1e; --ok-bg: #e3f1dc; --warn: #7a5d00; --warn-bg: #fff4cc; --err: #a32d2d; --err-bg: #fcebeb;
+    /* Lipóti szabálykönyv: liszt háttér, kakaó szöveg, barna címek / keretek, morzsa vonalak, krém kiemelés */
+    --bg: #fbf6ec; --panel: #fff; --line: #e7d3b0; --text: #4a2810; --muted: #8a6a4e; --hint: #a88b6e;
+    --brand: #7a3a0e; --brand-soft: #f6ead2;
+    --ok: #2f6b2a; --ok-bg: #e6f0df; --warn: #7a5d00; --warn-bg: #fff1c7; --err: #a32020; --err-bg: #fbe7e4;
     --miss: #8a4b08; --miss-bg: #fdebd3; --gray: #5f5e5a; --gray-bg: #eeede8;
   }
   * { box-sizing: border-box; }
@@ -22,12 +25,12 @@
   header.top { background: var(--brand); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 6; }
   header.top .in { max-width: 1120px; margin: 0 auto; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   header.top .cim { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 10px; }
-  header.top .szerzo { font-size: 12.5px; color: #c9d8e8; }
+  header.top .szerzo { font-size: 12.5px; color: #f1dcc0; }
   main { max-width: 1120px; margin: 0 auto; padding: 16px; }
   main.keskeny { max-width: 860px; }
   /* a bolt neve és a választó görgetéskor is fent marad */
   .fej { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px;
-    position: sticky; top: var(--topM, 0px); z-index: 5; box-shadow: 0 4px 12px rgba(29, 39, 51, .08); }
+    position: sticky; top: var(--topM, 0px); z-index: 5; box-shadow: 0 4px 12px rgba(74, 40, 16, .08); }
   .fej .vissza { align-self: flex-end; min-width: 0; padding: 8px 12px; }
   .eszk { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 10px; margin-left: 8px; vertical-align: 1px;
     border: 1px solid currentColor; white-space: nowrap; }
@@ -36,30 +39,30 @@
   .fej .ikon { font-size: 25px; color: var(--brand); background: var(--brand-soft); width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; flex: none; }
   /* ikoncsempe: kategóriánként saját színnel (--c: ikon, --cb: háttér) */
   .it { --c: var(--brand); --cb: var(--brand-soft); width: 36px; height: 36px; border-radius: 10px; display: inline-grid; place-items: center; flex: none;
-    background: var(--cb); color: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .04); }
+    background: var(--cb); color: var(--c); box-shadow: inset 0 0 0 1px rgba(74, 40, 16, .05); }
   .it i, .kfej .it i { font-size: 20px; color: var(--c); }
   .it.kis { width: 32px; height: 32px; border-radius: 9px; } .it.kis i { font-size: 18px; }
-  .kfej .db { font-size: 12.5px; font-weight: 600; color: var(--muted); background: #eef1f4; border-radius: 10px; padding: 1px 9px; }
+  .kfej .db { font-size: 12.5px; font-weight: 600; color: var(--muted); background: #f3e7d1; border-radius: 10px; padding: 1px 9px; }
   /* eladott, selejtezett, átadott eszközök: eszközönként fejléc + adatlap */
-  .kiv { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; padding: 13px 16px; border-bottom: 1px solid #edf0f3; }
+  .kiv { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; padding: 13px 16px; border-bottom: 1px solid #efe2c8; }
   .kiv:last-child { border-bottom: 0; }
   .kiv .it { grid-row: 1 / span 2; align-self: start; }
   .kiv .fo .c { font-weight: 600; font-size: 14.5px; }
   .kiv .fo .a { color: var(--muted); font-size: 13px; }
-  .kiv .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f1f4f7; border-radius: 5px; padding: 0 6px; }
+  .kiv .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f6ead2; border-radius: 5px; padding: 0 6px; }
   .kiv .jobb { align-self: start; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
   .kiv .jobb .badge { display: inline-flex; align-items: center; gap: 5px; }
   .kiv .jobb .badge i { font-size: 14px; }
   .kiv .adat { grid-column: 2 / -1; margin: 2px 0 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 14px; font-size: 13px;
-    background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; padding: 8px 12px; }
+    background: #fdf9f1; border: 1px solid #efe2c8; border-radius: 8px; padding: 8px 12px; }
   .kiv .adat dt { color: var(--muted); }
   .kiv .adat dd { margin: 0; }
   .kiv .adat a { color: var(--brand); font-weight: 600; text-decoration: none; }
   .kiv .adat a:hover { text-decoration: underline; }
   .kiv .adat .ceg { margin-left: 4px; }
-  .b-sold { background: #efe9fb; color: #5b21b6; }
+  .b-sold { background: #f3e3ee; color: #7a3f6b; }
   /* a kategóriák tételei (2026.11.16., a kivont eszközök mintájára): név + állapot / azonosító, jobbra jelvény és letöltés, alatta adatdoboz */
-  .tetel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 16px; border-bottom: 1px solid #edf0f3; }
+  .tetel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 16px; border-bottom: 1px solid #efe2c8; }
   .tetel .fo .c { font-weight: 600; font-size: 14.5px; }
   .tetel .fo .a { color: var(--muted); font-size: 13px; margin-top: 3px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
   .tetel .fo .a .eszk, .tetel .fo .a .ceg { margin-left: 0; }
@@ -67,7 +70,7 @@
   .tetel .jobb .badge { display: inline-flex; align-items: center; gap: 5px; }
   .tetel .jobb .badge i { font-size: 14px; }
   .tetel .mezok { grid-column: 1 / -1; margin: 2px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 4px 18px;
-    background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; padding: 8px 12px; }
+    background: #fdf9f1; border: 1px solid #efe2c8; border-radius: 8px; padding: 8px 12px; }
   .tetel .mezok dt { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
   .tetel .mezok dd { margin: 0; font-size: 13.5px; }
   .tetel .mezok dd.hiany { color: var(--miss); font-weight: 600; }
@@ -78,10 +81,10 @@
   details.elozmeny { grid-column: 1 / -1; border-top: 0; }
   details.elozmeny > summary { padding: 2px 0; font-size: 13px; }
   details.elozmeny > summary .hol { color: var(--muted); font-weight: 400; }
-  .idovonal { list-style: none; margin: 6px 0 0; padding: 10px 12px 2px; background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; }
+  .idovonal { list-style: none; margin: 6px 0 0; padding: 10px 12px 2px; background: #fdf9f1; border: 1px solid #efe2c8; border-radius: 8px; }
   .idovonal li { position: relative; padding: 0 0 12px 22px; }
-  .idovonal li::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #9aa6b2; box-sizing: border-box; }
-  .idovonal li::after { content: ""; position: absolute; left: 4px; top: 17px; bottom: 1px; width: 2px; background: #cdd5de; }
+  .idovonal li::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #b8916a; box-sizing: border-box; }
+  .idovonal li::after { content: ""; position: absolute; left: 4px; top: 17px; bottom: 1px; width: 2px; background: #e7d3b0; }
   .idovonal li:last-child::after { display: none; }
   .idovonal li.most::before { background: var(--brand); border-color: var(--brand); }
   .idovonal .hb { font-size: 13.5px; font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
@@ -97,13 +100,13 @@
   .idovonal .hd .gomb.kicsi { padding: 1px 7px; font-size: 12px; }
   .idovonal .hd .zar { color: var(--hint); font-size: 12px; }
   .term details.elozmeny { margin-top: 2px; }
-  .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f1f4f7; border-radius: 5px; padding: 0 6px; }
+  .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f6ead2; border-radius: 5px; padding: 0 6px; }
   /* bankterminálok: a bolt közös kódjai felül, alattuk terminálonként a típus, az állapot és a TID / S/N */
-  .tkozos { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0; padding: 9px 16px; background: #fbfcfd; border-bottom: 1px solid #edf0f3; }
+  .tkozos { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0; padding: 9px 16px; background: #fdf9f1; border-bottom: 1px solid #efe2c8; }
   .tkozos dt, .kodok dt { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
   .tkozos dd, .kodok dd { margin: 0; font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13.5px; color: var(--text); }
   .tkozos dd.nev { font-family: inherit; font-weight: 600; font-size: 13.5px; color: var(--brand); }
-  .term { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #edf0f3; }
+  .term { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #efe2c8; }
   .term:last-child { border-bottom: 0; }
   .term .c { font-weight: 600; font-size: 14.5px; }
   .term .a { color: var(--muted); font-size: 13px; }
@@ -121,42 +124,42 @@
   @media (min-width: 761px) { main.keskeny .fej .nev { min-width: 280px; } main.keskeny .fej select { min-width: 0; width: 240px; } }
   /* töltőképernyő (2026.11.26.): lépések állapotjelzéssel és százalékos sávval */
   .tolto { max-width: 560px; margin: 26px auto 30px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    box-shadow: 0 8px 28px rgba(29, 39, 51, .07); padding: 22px 24px 20px; }
+    box-shadow: 0 8px 28px rgba(74, 40, 16, .07); padding: 22px 24px 20px; }
   .tolto-fej { display: flex; align-items: center; gap: 14px; }
-  .tolto-ikon { width: 46px; height: 46px; border-radius: 12px; background: #e8f0f8; color: var(--brand); display: grid; place-items: center; font-size: 24px; flex: none;
+  .tolto-ikon { width: 46px; height: 46px; border-radius: 12px; background: #f6ead2; color: var(--brand); display: grid; place-items: center; font-size: 24px; flex: none;
     animation: toltoLeg 1.6s ease-in-out infinite; }
-  @keyframes toltoLeg { 0%, 100% { box-shadow: 0 0 0 0 rgba(31, 78, 121, .18); } 50% { box-shadow: 0 0 0 7px rgba(31, 78, 121, 0); } }
+  @keyframes toltoLeg { 0%, 100% { box-shadow: 0 0 0 0 rgba(122, 58, 14, .18); } 50% { box-shadow: 0 0 0 7px rgba(122, 58, 14, 0); } }
   .tolto-szoveg { min-width: 0; }
   .tolto-cim { font-weight: 600; font-size: 16px; color: var(--text); overflow-wrap: anywhere; }
   .tolto-al { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
   .tolto-pct { margin-left: auto; font-size: 24px; font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
-  .tolto-sav { height: 10px; background: #e6edf4; border-radius: 99px; overflow: hidden; margin: 16px 0 16px; }
+  .tolto-sav { height: 10px; background: #f1e2c8; border-radius: 99px; overflow: hidden; margin: 16px 0 16px; }
   .tolto-tolt { height: 100%; width: 0; border-radius: 99px; transition: width .3s ease;
-    background: linear-gradient(90deg, #3b7bbf, #1f4e79); position: relative; overflow: hidden; }
+    background: linear-gradient(90deg, #a65a1c, #7a3a0e); position: relative; overflow: hidden; }
   .tolto-tolt::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
     transform: translateX(-100%); animation: toltoFeny 1.4s ease-in-out infinite; }
   @keyframes toltoFeny { to { transform: translateX(100%); } }
-  .tolto.kesz .tolto-tolt { background: linear-gradient(90deg, #3d8b40, #2e7d32); }
+  .tolto.kesz .tolto-tolt { background: linear-gradient(90deg, #3f7f39, #2f6b2a); }
   .tolto.kesz .tolto-tolt::after, .tolto.kesz .tolto-ikon { animation: none; }
   .tolto-lepesek { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .tolto-lepesek li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #9aa5b1; }
-  .tolto-lepesek .jel { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d5dde6; display: grid; place-items: center; flex: none; font-size: 13px; color: #fff; }
+  .tolto-lepesek li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #b39b82; }
+  .tolto-lepesek .jel { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #e2c9a3; display: grid; place-items: center; flex: none; font-size: 13px; color: #fff; }
   .tolto-lepesek li.fut { color: var(--text); font-weight: 600; }
-  .tolto-lepesek li.fut .jel { border-color: #c5d3e0; border-top-color: var(--brand); animation: s .8s linear infinite; }
+  .tolto-lepesek li.fut .jel { border-color: #e2c9a3; border-top-color: var(--brand); animation: s .8s linear infinite; }
   .tolto-lepesek li.kesz { color: var(--text); }
-  .tolto-lepesek li.kesz .jel { background: #2e7d32; border-color: #2e7d32; }
+  .tolto-lepesek li.kesz .jel { background: #2f6b2a; border-color: #2f6b2a; }
   .tolto-lepesek li .ido { margin-left: auto; color: var(--muted); font-weight: 400; font-size: 12px; font-variant-numeric: tabular-nums; }
   .tolto-labl { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; }
   @media (max-width: 560px) { .tolto { margin: 14px 0 20px; padding: 18px 16px; } .tolto-pct { font-size: 20px; min-width: 52px; } }
   .fej label, .szuro label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
-  select, input[type=search] { font: inherit; font-size: 15px; padding: 9px 12px; border: 1px solid #b9c3cd; border-radius: 8px; background: #fff; max-width: 100%; }
+  select, input[type=search] { font: inherit; font-size: 15px; padding: 9px 12px; border: 1px solid #d8bf98; border-radius: 8px; background: #fff; max-width: 100%; }
   select { min-width: 260px; cursor: pointer; }
   select:focus, input[type=search]:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
   .kartya { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-  .kfej { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: #f7f9fb; border-bottom: 1px solid var(--line); }
+  .kfej { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: #fdf9f1; border-bottom: 1px solid var(--line); }
   .kfej i { font-size: 22px; color: var(--brand); }
   .kfej h2 { margin: 0; font-size: 16px; font-weight: 600; flex: 1; }
-  .sor { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #edf0f3; }
+  .sor { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #efe2c8; }
   .sor:last-child { border-bottom: 0; }
   .sor .c { font-weight: 600; font-size: 14.5px; }
   .sor .a { color: var(--muted); font-size: 13px; }
@@ -167,7 +170,7 @@
   .fej h1 .badge { vertical-align: 3px; margin-left: 8px; }
   .gomb { font: inherit; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
     border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; white-space: nowrap; min-width: 118px; justify-content: center; }
-  .gomb:hover { background: #173d60; }
+  .gomb:hover { background: #6f370f; }
   .gomb.kicsi { min-width: 0; padding: 5px 10px; font-size: 13px; background: #fff; color: var(--brand); }
   .gomb.kicsi:hover { background: var(--brand-soft); }
   .gomb[aria-busy=true] { opacity: .7; cursor: progress; }
@@ -184,12 +187,12 @@
   summary::-webkit-details-marker { display: none; }
   summary i { transition: transform .15s; }
   details[open] summary i { transform: rotate(90deg); }
-  .reg { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 16px 6px 36px; font-size: 13.5px; border-top: 1px solid #f1f3f6; }
+  .reg { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 16px 6px 36px; font-size: 13.5px; border-top: 1px solid #f3e7d1; }
   .reg .d { color: var(--muted); font-variant-numeric: tabular-nums; }
   .ceg { font-size: 11.5px; color: var(--brand); background: var(--brand-soft); border-radius: 8px; padding: 1px 7px; margin-left: 6px; font-weight: 600; }
   .info { color: var(--muted); font-size: 13px; text-align: center; padding: 28px 10px; }
   .hiba { background: var(--err-bg); color: var(--err); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
-  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid #c5d3e0; border-top-color: var(--brand); border-radius: 50%; animation: s .8s linear infinite; vertical-align: -2px; }
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid #e2c9a3; border-top-color: var(--brand); border-radius: 50%; animation: s .8s linear infinite; vertical-align: -2px; }
   .gomb .spin { border-color: rgba(255,255,255,.4); border-top-color: #fff; }
   @keyframes s { to { transform: rotate(360deg); } }
   /* összesített (könyvelői) nézet: a szűrők a rögzített fejlécben (a cím és a választó alatt), a táblázat a lappal görög,
@@ -203,11 +206,11 @@
   /* fejléc sötétkék, fehér betűvel (2026.11.26.) */
   .tabla th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #fff; background: var(--brand); font-weight: 700; padding: 8px 8px;
     border-bottom: 1px solid var(--brand); border-right: 1px solid rgba(255, 255, 255, .16); position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px)); z-index: 2; }
-  .tabla td { padding: 4px 8px; border-bottom: 1px solid #e6ebf0; border-right: 1px solid #eef1f4; vertical-align: middle; line-height: 1.35; }
+  .tabla td { padding: 4px 8px; border-bottom: 1px solid #e7d3b0; border-right: 1px solid #f3e7d1; vertical-align: middle; line-height: 1.35; }
   .tabla th:last-child, .tabla td:last-child { border-right: 0; text-align: center; }
   .tablakartya .tabla th:first-child { border-top-left-radius: 11px; } .tablakartya .tabla th:last-child { border-top-right-radius: 11px; }
   .tabla tbody tr:last-child:not(.gl) td { border-bottom: 0; }
-  .tabla tr:hover td { background: #f7fafc; }
+  .tabla tr:hover td { background: #f8efdf; }
   .tabla .bolt { font-weight: 600; }
   .tabla .sub { color: var(--muted); font-size: 12px; }
   .tabla .d { white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -225,8 +228,8 @@
   .tabla .eszk { font-size: 11.5px; padding: 0 7px; margin-left: 6px; }
   /* boltonkénti keret (2026.11.26.): a bolt sorai egy keretben, a Bolt / Cím / Cég cella boltonként egyszer (összevonva),
      a boltok között hézag; a bolt neve görgetéskor a csoport tetején marad */
-  .tabla { --keret: #9db4cc; }
-  .tabla td.c-bolt, .tabla td.c-ceg { vertical-align: top; background: #f8fafc; }
+  .tabla { --keret: #c9a77a; }
+  .tabla td.c-bolt, .tabla td.c-ceg { vertical-align: top; background: #fdf9f1; }
   .tabla td.c-bolt { border-left: 2px solid var(--keret); }
   .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px) + 36px); display: block; padding: 4px 0; }
   /* a bolt cellája: a név, alatta kisebben a cím (2026.11.26.: „a Bolt és a Cím legyen egy cellában”) */
@@ -239,7 +242,7 @@
   .tabla td.c-bolt.gcell { border-bottom-left-radius: 9px; } .tabla tr.gl td:last-child { border-bottom-right-radius: 9px; }
   .tabla tbody tr.koz td { height: 10px; padding: 0; border: 0; background: var(--panel); }
   .tabla tbody tr.koz:hover td { background: var(--panel); }
-  .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-ceg { background: #f8fafc; }
+  .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-ceg { background: #fdf9f1; }
   /* az összesítő széles: a bolt neve, a cég és a kategória egy sorban */
   body.szeles main, body.szeles header.top .in, body.szeles footer { max-width: 1480px; }
   @media (min-width: 761px) {
@@ -303,6 +306,74 @@
     .kiv .adat { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: 0; }
     .kiv .adat dt { font-size: 11.5px; margin-top: 4px; } .kiv .adat dt:first-child { margin-top: 0; }
   }
+
+  /* ===== Lipóti vizuális szabálykönyv (2026.11.26.) – minden Lipóti felület ezt követi ===== */
+  :root { --liszt: #fbf6ec; --kakao: #4a2810; --barna: #7a3a0e; --gomb: #8a4513; --gomb-h: #6f370f; --morzsa: #e7d3b0; --krem: #f6ead2;
+    --csik: #efedea; --sugo: #7a5a3e; }
+  body { font-family: Carlito, Calibri, "Segoe UI", Arial, sans-serif; font-size: 18px; line-height: 1.45; }
+  header.top { background: var(--barna); }
+  header.top .cim { font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 19px; letter-spacing: .2px; }
+  header.top .szerzo { font-size: 14px; }
+  .fej h1 { font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 24px; color: var(--barna); }
+  .fej, .kartya { border-radius: 14px; box-shadow: 0 4px 14px rgba(74, 40, 16, .10); }
+  .fej label, .szuro label { font-size: 15px; color: var(--sugo); }
+  .fej .al, .fej .cimsor { font-size: 15px; color: var(--sugo); }
+  .fej .cegsor { font-size: 17px; color: var(--barna); font-weight: 700; }
+  select, input[type=search] { font-size: 18px; min-height: 52px; padding: 10px 14px; border: 1px solid #d8bf98; border-radius: 10px; color: var(--kakao); }
+  select:focus, input[type=search]:focus { outline: 2px solid var(--gomb); border-color: var(--gomb); }
+  .gomb { font-size: 17px; font-weight: 700; border-radius: 12px; background: var(--gomb); border-color: var(--gomb); padding: 10px 16px; }
+  .gomb:hover { background: var(--gomb-h); border-color: var(--gomb-h); }
+  .gomb.kicsi, .gomb.nez { background: #fff; color: var(--barna); border: 1px solid var(--morzsa); border-radius: 10px; }
+  .gomb.kicsi:hover, .gomb.nez:hover { background: var(--krem); }
+  .fej .vissza { font-size: 16px; padding: 10px 14px; }
+  /* jelvények, címkék, típus- és állapotjelek: lekerekített téglalap, 6 px */
+  .badge, .eszk, .ceg, .kfej .db, .tabla .badge, .tabla .badge.ket, .idovonal .hb .badge, .azon, .kiv .azon { border-radius: 6px; }
+  .badge { font-size: 14.5px; font-weight: 700; } .eszk { font-size: 13.5px; } .ceg { font-size: 13px; }
+  .b-info { background: var(--krem); color: var(--barna); } .e-info { color: var(--barna); }
+  .kfej { background: var(--krem); border-bottom-color: var(--morzsa); }
+  .kfej h2 { font-size: 22px; font-weight: 700; color: var(--barna); }
+  .tetel .fo .c, .kiv .fo .c, .term .c, .sor .c { font-size: 19px; font-weight: 700; }
+  .tetel .fo .a, .kiv .fo .a, .term .a, .sor .a { font-size: 15.5px; }
+  .tetel .mezok dt, .tkozos dt, .kodok dt { font-size: 12.5px; letter-spacing: .6px; color: #8a6a4e; }
+  .tetel .mezok dd, .tkozos dd, .kodok dd, .kiv .adat, .tetel .mezok dd.kod { font-size: 16px; }
+  summary, .reg, details.elozmeny > summary { font-size: 16px; }
+  .idovonal .hb { font-size: 16px; } .idovonal .hr, .idovonal .hd { font-size: 14.5px; }
+  .info, .talalat { font-size: 15px; } footer { font-size: 15px; color: var(--sugo); }
+  .hiba { color: #a32020; background: #fbe7e4; font-weight: 700; font-size: 16px; }
+  main.keskeny { max-width: 900px; }
+  /* táblázat: csíkozott sorok (fehér / #efedea), vékony morzsa vonalak, rögzített nagybetűs barna fejléc, sűrű sorok */
+  .tabla { font-size: 14.5px; }
+  .tabla th { font-size: 12.5px; letter-spacing: .7px; background: var(--barna); border-bottom-color: var(--barna); border-right-color: rgba(255, 255, 255, .18); }
+  .tabla td { border-bottom: 1px solid var(--morzsa); border-right: 1px solid var(--morzsa); padding: 3px 8px; }
+  .tabla tr.cs td { background: var(--csik); }
+  .tabla td.d:not(.azon-o) { white-space: pre; } /* „üzembe h.:” a dátum fölött, a dátum nem törik */
+  @media (min-width: 1400px) { .tabla td.c-kat { white-space: nowrap; } .tabla td.c-kat + td { min-width: 210px; } }
+  .tabla tr:hover td { background: var(--krem); }
+  .tabla td.c-bolt, .tabla td.c-ceg, .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-ceg { background: #fdf9f1; }
+  .tabla .sub, .tabla .kv, .tabla .zartb, .tabla td.c-bolt .bcim { font-size: 13px; }
+  .tabla td.azon-o { font-size: 13.5px; } .tabla td.azon-o .sub { font-size: 12px; }
+  .tabla .badge { font-size: 13px; } .tabla .eszk { font-size: 12px; }
+  .tabla .bolt { font-size: 15.5px; } .tabla a.bolt { color: var(--barna); }
+  /* betöltő: barna keret, százalékos gyűrű és csík, „Betöltés…” */
+  .tolto { border: 4px solid var(--barna); border-radius: 16px; box-shadow: 0 10px 30px rgba(74, 40, 16, .22); }
+  .tolto-gyuru { position: relative; width: 66px; height: 66px; flex: none; }
+  .tolto-gyuru svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+  .tolto-gyuru circle { fill: none; stroke-width: 6; }
+  .tolto-gyuru .h { stroke: var(--morzsa); }
+  .tolto-gyuru .e { stroke: var(--barna); stroke-linecap: round; transition: stroke-dashoffset .3s ease; }
+  .tolto.kesz .tolto-gyuru .e { stroke: var(--ok); }
+  .tolto-gyuru .tolto-pct { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; min-width: 0; text-align: center;
+    font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 16px; color: var(--barna); }
+  .tolto-cim { font-size: 22px; font-weight: 700; color: var(--barna); }
+  .tolto-al { font-size: 16px; color: var(--sugo); }
+  .tolto-tolt { background: linear-gradient(90deg, #a65a1c, var(--barna)); }
+  .tolto-lepesek li { font-size: 16.5px; }
+  .tolto-labl { font-size: 15px; color: var(--sugo); }
+  @media (max-width: 760px) {
+    .tabla tr.cs td { background: none; } .tabla tr.cs { background: var(--csik); }
+    select, input[type=search] { font-size: 17px; }
+    .fej h1 { font-size: 20px; } header.top .cim { font-size: 17px; }
+  }
 </style>
 </head>
 <body class="szeles">
@@ -356,18 +427,20 @@
     const lepesek = fajta === 'bolt'
       ? ['Kapcsolódás a nyilvántartáshoz', 'A bolt dokumentumainak lekérése', 'Adatok feldolgozása', 'Dokumentumok megjelenítése']
       : ['Kapcsolódás a nyilvántartáshoz', 'Az összesítő lekérése (minden bolt, minden tétel)', 'Adatok feldolgozása', 'Táblázat megjelenítése'];
-    const cim = fajta === 'bolt' ? (nev ? nev + ' – dokumentumok betöltése' : 'A bolt dokumentumainak betöltése') : 'Az összesített nyilvántartás betöltése';
+    const mit = fajta === 'bolt' ? (nev ? nev + ' – dokumentumok' : 'A bolt dokumentumai') : 'Összesített nyilvántartás';
     $('lista').innerHTML = '<div class="tolto" role="status" aria-live="polite">' +
-      '<div class="tolto-fej"><span class="tolto-ikon"><i class="ti ' + (fajta === 'bolt' ? 'ti-building-store' : 'ti-table') + '" aria-hidden="true"></i></span>' +
-      '<div class="tolto-szoveg"><div class="tolto-cim">' + esc(cim) + '</div><div class="tolto-al">Élő adatok a nyilvántartásból – ez néhány másodpercig tarthat.</div></div>' +
-      '<div class="tolto-pct">0%</div></div>' +
+      '<div class="tolto-fej"><div class="tolto-gyuru"><svg viewBox="0 0 66 66" aria-hidden="true"><circle class="h" cx="33" cy="33" r="27"/>' +
+        '<circle class="e" cx="33" cy="33" r="27" stroke-dasharray="169.65" stroke-dashoffset="169.65"/></svg><div class="tolto-pct">0%</div></div>' +
+      '<div class="tolto-szoveg"><div class="tolto-cim">Betöltés…</div><div class="tolto-al">' + esc(mit) + '</div></div></div>' +
       '<div class="tolto-sav" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tolto-tolt"></div></div>' +
       '<ol class="tolto-lepesek">' + lepesek.map((l) => '<li><span class="jel"></span><span>' + esc(l) + '</span><span class="ido"></span></li>').join('') + '</ol>' +
-      '<div class="tolto-labl"><i class="ti ti-shield-check" aria-hidden="true"></i>Az adatok közvetlenül a felülvizsgálati nyilvántartásból érkeznek.</div></div>';
+      '<div class="tolto-labl"><i class="ti ti-shield-check" aria-hidden="true"></i>Élő adatok a felülvizsgálati nyilvántartásból – ez néhány másodpercig tarthat.</div></div>';
     const el = $('lista').querySelector('.tolto'), li = [...el.querySelectorAll('.tolto-lepesek li')];
     const pctEl = el.querySelector('.tolto-pct'), tolt = el.querySelector('.tolto-tolt'), sav = el.querySelector('.tolto-sav');
     let i = -1, t0 = Date.now(), p = 0;
-    const kiir = () => { const v = Math.floor(p); pctEl.textContent = v + '%'; tolt.style.width = p + '%'; sav.setAttribute('aria-valuenow', v); };
+    const gyuru = el.querySelector('.tolto-gyuru .e');
+    const kiir = () => { const v = Math.floor(p); pctEl.textContent = v + '%'; tolt.style.width = p + '%'; sav.setAttribute('aria-valuenow', v);
+      gyuru.setAttribute('stroke-dashoffset', (169.65 * (1 - p / 100)).toFixed(2)); };
     const ora = setInterval(() => {
       if (!el.isConnected) { clearInterval(ora); return; }
       if (i >= 0 && i < lepesek.length) {
@@ -403,11 +476,11 @@
 
   // kategóriánkénti ikonszín: [ikon, háttér]
   const IKSZIN = {
-    'tools-kitchen-2': ['#2f7d32', '#e6f4e7'], 'droplet': ['#0e7490', '#dff3f7'], 'helmet': ['#b45309', '#fdf0dc'], 'bolt': ['#a16207', '#fcf4d6'],
-    'scale-outline': ['#6d28d9', '#efe9fb'], 'cash-register': ['#0f766e', '#dcf2ee'], 'file-certificate': ['#4338ca', '#e8e9fb'], 'bug': ['#9a3412', '#fbe9df'],
-    'fire-extinguisher': ['#b91c1c', '#fce8e8'], 'credit-card-pay': ['#1d4ed8', '#e3ecfc'], 'printer': ['#475569', '#eaeef3'], 'archive': ['#5f5e5a', '#eeede8'],
+    'tools-kitchen-2': ['#2f7d32', '#e6f4e7'], 'droplet': ['#5d6b3a', '#eef0dc'], 'helmet': ['#b45309', '#fdf0dc'], 'bolt': ['#a16207', '#fcf4d6'],
+    'scale-outline': ['#7a3f6b', '#f3e3ee'], 'cash-register': ['#7a4a1e', '#f3e4cc'], 'file-certificate': ['#6b3f5a', '#f1e4ea'], 'bug': ['#9a3412', '#fbe9df'],
+    'fire-extinguisher': ['#b91c1c', '#fce8e8'], 'credit-card-pay': ['#8a4513', '#f6ead2'], 'printer': ['#6b5a4a', '#efe8df'], 'archive': ['#5f5e5a', '#eeede8'],
   };
-  const ikSzin = (ik) => IKSZIN[ik] || ['#1f4e79', '#e8f0f8'];
+  const ikSzin = (ik) => IKSZIN[ik] || ['#7a3a0e', '#f6ead2'];
   function ikonCsempe(ik, kis) {
     const c = ikSzin(ik);
     return '<span class="it' + (kis ? ' kis' : '') + '" style="--c:' + c[0] + ';--cb:' + c[1] + '"><i class="ti ti-' + esc(ik) + '" aria-hidden="true"></i></span>';
@@ -652,11 +725,12 @@
     // boltonkénti csoportok: az egymás utáni, azonos boltú sorok (a lista boltonként rendezett)
     const csop = l.map((s, i) => { let n = 1; if (i && l[i - 1].bolt === s.bolt) return 0; while (i + n < l.length && l[i + n].bolt === s.bolt) n++; return n; });
     const utolso = l.map((s, i) => i === l.length - 1 || l[i + 1].bolt !== s.bolt);
+    const poz = []; l.forEach((s, i) => poz.push(i && l[i - 1].bolt === s.bolt ? poz[i - 1] + 1 : 0));
     $('tsor').innerHTML = l.length ? l.map((s, i) => {
       // kivont eszköz: a megjegyzésből röviden az új helye vagy az esemény dátuma; az utolsó felülvizsgálat a Dátum oszlopba kerül
       const kv = s.kivont ? kivontAdat({ megj: s.reszlet }) : null;
       const kvSor = kv ? [kv.hely ? '→ ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
-      const datum = s.datum ? (s.uzembe ? 'üzembe h.: ' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
+      const datum = s.datum ? (s.uzembe ? 'üzembe h.:\n' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
       // még fel nem vett gép (nincs azonosító, a tétel neve a kategória): mint a bolt oldalán, „Még nincs rögzített …”
       const kulsoHely = !s.kivont && !s.terminal && !s.azon && kulsoTetel(s);
       const cim = !kulsoHely && !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
@@ -666,7 +740,7 @@
           (boltCim(s.bolt) ? '<span class="bcim">' + esc(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
       return (n && i ? '<tr class="koz" aria-hidden="true"><td colspan="9"></td></tr>' : '') +
-      '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + '">' + fej +
+      '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + (poz[i] % 2 ? ' cs' : '') + '">' + fej +
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
