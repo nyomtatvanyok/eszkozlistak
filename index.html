@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795712570521";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795713120109";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -468,7 +468,9 @@
   .tablakartya .tabla th:first-child::before { left: 0; background: radial-gradient(circle at 100% 100%, transparent 11.6px, var(--bg) 12.4px); }
   .tablakartya .tabla th:last-child::before { right: 0; background: radial-gradient(circle at 0 100%, transparent 11.6px, var(--bg) 12.4px); }
   /* görgetés közben: a fejléc fölötti sáv a lap hátterével takarva, alatta árnyék, hogy a fejléc elváljon a listától */
-  body.gorget .tabla th { box-shadow: 0 -8px 0 0 var(--bg), 0 7px 9px -6px rgba(74, 40, 16, .45); }
+  /* (javítás: a fejléc fölötti takaró a teljes rés magasságú és szögletes – a panel lekerekített „árnyéka” a két szélen sarokfoltot
+     hagyott, ott átlátszott a lista szegélye) */
+  body.gorget .tabla th { box-shadow: 0 calc(-1 * var(--fejRes, 14px) - 4px) 0 0 var(--bg), 0 7px 9px -6px rgba(74, 40, 16, .45); }
   .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { top: calc(var(--topM, 0px) + var(--fejM, 0px) + var(--thH)); }
   /* a rögzített felső panel alatti rés (2026.11.26. javítás: a korábbi takaró a panel alsó szegélyére és sarkaira is rárajzolt, a panel
      alja „levágottnak” látszott): a takaró a panel saját, lefelé eltolt, lap színű árnyéka – a panel MÖGÖTT van, a panel szegélye,
@@ -490,6 +492,61 @@
   /* jelmagyarázat: az állapotok cellákban, vékony elválasztó szegélyekkel (2026.11.26.) */
   footer .jelek { gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fffdf9; }
   footer .jelek > div { padding: 12px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+
+  /* működési cím (2026.11.26.): nagyobb tér a bolt neve alatt, a cím fölött „Működési cím:” címke */
+  .tabla td.c-bolt .bcim { margin-top: 9px; }
+  .mcimke { display: block; font-weight: 700; color: var(--sugo); font-size: 12px; letter-spacing: .2px; margin-bottom: 1px; }
+  .fej .cimsor .mcimke { font-size: 13px; }
+
+  /* ===== belépés (2026.11.26.) – Lipóti szabálykönyv: 4 px-es barna keret, liszt háttér, Montserrat cím, nagy mezők és gomb ===== */
+  body.belepesmod main, body.belepesmod footer { display: none !important; }
+  .belepes { min-height: calc(100vh - var(--topM, 56px)); display: flex; align-items: center; justify-content: center; padding: 36px 16px 48px;
+    background: radial-gradient(1200px 500px at 50% -10%, #f6ead2 0%, transparent 70%), var(--bg); }
+  .bkartya { width: 100%; max-width: 470px; background: #fff; border: 4px solid var(--barna); border-radius: 18px; box-shadow: 0 16px 40px rgba(74, 40, 16, .22);
+    padding: 34px 34px 26px; color: var(--kakao); }
+  .bkartya .blogo { width: 70px; height: 70px; border-radius: 18px; background: var(--krem); color: var(--barna); display: grid; place-items: center; margin: 0 auto 16px;
+    font-size: 36px; box-shadow: inset 0 0 0 1px var(--morzsa); }
+  .bkartya h1 { font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 25px; color: var(--barna); text-align: center; margin: 0 0 6px; }
+  .bkartya .bal { text-align: center; color: var(--sugo); font-size: 16px; margin: 0 0 24px; line-height: 1.4; }
+  .bkartya label { display: block; font-size: 15px; font-weight: 700; color: var(--kakao); margin: 0 0 6px; }
+  .bmezo { position: relative; margin-bottom: 16px; }
+  .bkartya .bmezo > i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--sugo); pointer-events: none; }
+  .bmezo select, .bmezo input { width: 100%; min-height: 54px; font: inherit; font-size: 18px; color: var(--kakao); padding: 10px 14px 10px 44px;
+    border: 1px solid #d8bf98; border-radius: 12px; background: #fff; }
+  .bmezo input { padding-right: 54px; }
+  .bmezo select:focus, .bmezo input:focus { outline: 2px solid var(--gomb); outline-offset: 0; border-color: var(--gomb); }
+  .bmutat { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border: 0; border-radius: 10px; background: transparent;
+    color: var(--barna); display: grid; place-items: center; font-size: 20px; cursor: pointer; }
+  .bmutat:hover { background: var(--krem); }
+  .bcaps { display: flex; align-items: center; gap: 6px; margin: -8px 0 12px; color: #9a5b00; font-size: 14.5px; font-weight: 700; }
+  .bcaps[hidden] { display: none; }
+  .bkartya .bmarad { display: flex; align-items: center; gap: 10px; font-weight: 400; font-size: 15.5px; color: var(--kakao); margin: 4px 0 16px; cursor: pointer; }
+  .bmarad input { width: 20px; height: 20px; accent-color: var(--gomb); margin: 0; flex: none; }
+  .bhiba { display: flex; align-items: flex-start; gap: 8px; background: var(--err-bg, #fde8e8); color: var(--err, #b42318); border: 1px solid #f3c5c0; border-radius: 10px;
+    padding: 10px 12px; font-size: 15px; font-weight: 700; margin: 0 0 14px; line-height: 1.35; }
+  .bhiba[hidden] { display: none; }
+  .bhiba i { font-size: 18px; margin-top: 1px; flex: none; }
+  .bgomb { width: 100%; justify-content: center; min-height: 56px; font-size: 19px; border-radius: 12px; gap: 10px; }
+  .bgomb i { font-size: 22px; }
+  .bgomb.folyik { opacity: .85; cursor: progress; }
+  .bgomb.folyik i { animation: bpulzal 1s ease-in-out infinite; }
+  @keyframes bpulzal { 50% { transform: translateX(3px); } }
+  .bsugo { text-align: center; font-size: 14.5px; color: var(--sugo); margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+  .bsugo a { color: var(--barna); font-weight: 700; }
+  .razas { animation: brazas .4s ease; }
+  @keyframes brazas { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+  @media (max-width: 480px) { .bkartya { padding: 26px 18px 20px; } .bkartya h1 { font-size: 22px; } }
+  @media (prefers-reduced-motion: reduce) { .razas, .bgomb.folyik i { animation: none; } }
+  /* fejléc: ki van belépve, kijelentkezés */
+  header.top .in { align-items: center; }
+  header.top .fiok { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 14.5px; color: #f6e6cf; }
+  header.top .fiok[hidden] { display: none; }
+  header.top .fiok > i { font-size: 18px; }
+  header.top .fiok #fiokNev { font-weight: 700; color: #fff; }
+  header.top .kilep { margin-left: 6px; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 14px; font-weight: 700; color: #fff;
+    background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .4); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+  header.top .kilep:hover { background: rgba(255, 255, 255, .22); }
+  @media (max-width: 560px) { header.top .fiok #fiokNev { display: none; } }
   /* kéttónusú ikonok: a halvány réteg kicsit erősebb, a méret a régiekével egyezik */
   .ph-duotone { line-height: 1; vertical-align: -0.125em; }
   .ph-duotone.ph-duotone::before { opacity: .28; }
@@ -513,7 +570,7 @@
 </style>
 </head>
 <body class="szeles">
-<header class="top"><div class="in"><span class="cim"><i class="ti ti-folders" aria-hidden="true"></i>Bolti dokumentumtár</span><span class="szerzo">by: Jacsó József</span></div></header>
+<header class="top"><div class="in"><span class="cim"><i class="ti ti-folders" aria-hidden="true"></i>Bolti dokumentumtár</span><span class="szerzo">by: Jacsó József</span><div class="fiok" id="fiok" hidden><i class="ti ti-user" aria-hidden="true"></i><span id="fiokNev"></span><button type="button" class="kilep" id="kilep"><i class="ti ti-logout" aria-hidden="true"></i>Kijelentkezés</button></div></div></header>
 <!-- már betöltés előtt a megfelelő elrendezés: összesítő = széles, bolt (?bolt=) = keskeny -->
 <main id="foresz" class="">
   <div class="fej">
@@ -551,13 +608,14 @@
   // látszik – a később kirajzolt tartalomban is (figyelő). Aminek nincs párja, az a régi ikon marad.
   (function () {
     const PH = {
-      'download': 'download-simple', 'table': 'table', 'lock': 'lock-simple', 'info-circle': 'info', 'folders': 'folders', 'chevron-right': 'caret-right',
+      'download': 'file-arrow-down', // (2026.11.26.: a „download-simple” tálcás ikon kicsiben foltos volt) 'table': 'table', 'lock': 'lock-simple', 'info-circle': 'info', 'folders': 'folders', 'chevron-right': 'caret-right',
       'building-store': 'storefront', 'shield-check': 'shield-check', 'pointer': 'cursor-click', 'map-pin': 'map-pin', 'mail': 'envelope-simple',
       'filter-off': 'funnel-simple-x', 'file-text': 'file-text', 'eye': 'eye', 'external-link': 'arrow-square-out', 'clock': 'clock',
       'circle-dashed': 'circle-dashed', 'circle-check': 'check-circle', 'check': 'check', 'arrow-left': 'arrow-left', 'arrow-right': 'arrow-right',
       'archive': 'archive', 'alert-triangle': 'warning', 'tools-kitchen-2': 'fork-knife', 'droplet': 'drop', 'helmet': 'hard-hat', 'bolt': 'lightning',
       'scale-outline': 'scales', 'cash-register': 'cash-register', 'file-certificate': 'certificate', 'bug': 'bug', 'fire-extinguisher': 'fire-extinguisher',
       'credit-card-pay': 'credit-card', 'printer': 'printer', 'arrows-exchange': 'arrows-left-right', 'receipt-2': 'receipt', 'trash': 'trash',
+      'user': 'user', 'key': 'key', 'login': 'sign-in', 'logout': 'sign-out', 'eye-off': 'eye-slash',
       'minus': 'minus-circle', 'circle-minus': 'minus-circle', 'clock-pause': 'pause-circle', 'hourglass-empty': 'hourglass-medium', 'building': 'buildings',
     };
     const csere = (i) => {
@@ -585,11 +643,24 @@
   const API = "https://script.google.com/macros/s/AKfycbxPYWjfIl8A0uARtqrcmVwBYvZqep0Y9M0FGkaXpMM8T6Yq4yCpUmrrmCuckYzmy_eH/exec";
   const hivas = async (fn, ...a) => {
     let v;
+    const b = belepAdat(); // a belépő (token) minden kéréshez – nélküle a szerver nem ad adatot (2026.11.26.)
     try {
-      const r = await fetch(API + '?api=' + encodeURIComponent(fn) + '&a=' + encodeURIComponent(JSON.stringify(a)), { redirect: 'follow', cache: 'no-store' });
+      const r = await fetch(API + '?api=' + encodeURIComponent(fn) + '&a=' + encodeURIComponent(JSON.stringify(a)) + '&t=' + encodeURIComponent(b ? b.token : ''), { redirect: 'follow', cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       v = await r.json();
     } catch (e) { throw new Error('A kapcsolat a táblázattal nem sikerült (' + (e && e.message ? e.message : e) + ')'); }
+    if (v && v.belepes) { belepesLejart(); throw new Error(v.hiba || 'Lépj be újra.'); }
+    if (!v || !v.ok) throw new Error(v && v.hiba ? v.hiba : 'Ismeretlen hiba');
+    return v.adat;
+  };
+  // belépés (2026.11.26.): a GitHub-os változatban POST a webalkalmazásnak, a jelszó nem kerül az URL-be (tools/github_eszkozlistak.js)
+  const belepesHivas = async (felh, jelszo, marad) => {
+    let v;
+    try {
+      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ api: 'belepes', felh: felh, jelszo: jelszo, marad: !!marad }), redirect: 'follow', cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      v = await r.json();
+    } catch (e) { throw new Error('A kapcsolat a szerverrel nem sikerült – ellenőrizd az internetkapcsolatot, és próbáld újra.'); }
     if (!v || !v.ok) throw new Error(v && v.hiba ? v.hiba : 'Ismeretlen hiba');
     return v.adat;
   };
@@ -905,8 +976,11 @@
   /** A cím két sorban (2026.11.26.): irányítószám + város (az első vesszőig), alatta a többi – HTML-ként. */
   const cimKetSor = (c) => {
     const t = String(c || '').trim(), i = t.indexOf(',');
-    return i < 0 ? esc(t) : esc(t.slice(0, i + 1)) + '<br>' + esc(t.slice(i + 1).trim());
+    // (2026.11.26.: az első sor végén nincs vessző – „1031 Budapest” / „Példa utca 28.”)
+    return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<br>' + esc(t.slice(i + 1).trim());
   };
+  /** „Működési cím:” címke a cím fölött (2026.11.26., felhasználó: „a működési cím szó is legyen ott”). */
+  const MUKODESI = '<span class="mcimke">Működési cím:</span>';
   const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   /** Az összesítő állapotjelvénye ikonnal (mint a bolt oldalán); a kivont eszköz a saját színével (átadva, eladva, leselejtezve). */
   function allapotJel(s) {
@@ -944,7 +1018,7 @@
       const cim = !kulsoHely && !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
       const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>' + // a „megszűnt / átadott bolt” jelzés csak a bolt lapján (2026.11.26.)
-          (boltCim(s.bolt) ? '<span class="bcim">' + cimKetSor(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
+          (boltCim(s.bolt) ? '<span class="bcim">' + MUKODESI + cimKetSor(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
       // a megszűnt / átadott boltok előtt egyszer elválasztó sor (2026.11.26.); a soraik halványabbak (zart)
       const zartFej = s.zart && n && !(i && l[i - 1].zart) ? '<tr class="zartfej"><td colspan="9"><span class="zcim"><i class="ti ti-archive" aria-hidden="true"></i>Megszűnt / átadott boltok</span>' +
@@ -973,7 +1047,7 @@
   // ---------------- egy bolt nézete
   /** A bolt címe a fejlécben, a cégnév alatt (térkép-tű ikonnal). */
   function cimsor(c) {
-    $('cimsor').innerHTML = c ? '<i class="ti ti-map-pin" aria-hidden="true"></i><span>' + cimKetSor(c) + '</span>' : '';
+    $('cimsor').innerHTML = c ? '<i class="ti ti-map-pin" aria-hidden="true"></i><span>' + MUKODESI + cimKetSor(c) + '</span>' : '';
     $('cimsor').hidden = !c;
   }
   async function boltMutat(nev) {
@@ -1118,6 +1192,98 @@
     hol.querySelectorAll('button[data-nez]').forEach((b) => { b.onclick = () => megnez(b); });
   }
 
+  // ---------------- belépés (2026.11.26., felhasználó: „Kell egy belépési felület … felhasználónál egy legördülő lista”)
+  // A jelszót a szerver ellenőrzi (a webalkalmazás); siker esetén aláírt, lejáró belépőt ad, minden adatkérés és letöltés ezzel megy.
+  // A belépő a böngészőben marad: alapból a lap bezárásáig (sessionStorage), „Maradjak bejelentkezve” esetén 30 napig (localStorage).
+  const BELEPES_KULCS = 'bolti_dokumentumtar_belepes', UTOLSO_FELH = 'bolti_dokumentumtar_felh';
+  const FELHASZNALOK = ['Könyvelés', 'Területi vezető', 'jacso.jozsef@lipotipekseg.hu'];
+  const tarolok = [() => sessionStorage, () => localStorage];
+  function belepAdat() {
+    const jo = (x) => x && x.token && x.lejar > Date.now();
+    if (jo(window.__belepo)) return window.__belepo;
+    for (const t of tarolok) { try { const x = JSON.parse(t().getItem(BELEPES_KULCS) || 'null'); if (jo(x)) return (window.__belepo = x); } catch (e) { /* nincs tároló */ } }
+    return null;
+  }
+  function belepesTorol() { window.__belepo = null; tarolok.forEach((t) => { try { t().removeItem(BELEPES_KULCS); } catch (e) { /* nincs tároló */ } }); }
+  function belepesMentes(x, marad) {
+    belepesTorol(); window.__belepo = x;
+    try { (marad ? localStorage : sessionStorage).setItem(BELEPES_KULCS, JSON.stringify(x)); } catch (e) { /* csak erre a megnyitásra */ }
+    try { localStorage.setItem(UTOLSO_FELH, x.felh); } catch (e) { /* nem fontos */ }
+  }
+  /** A fejlécben: ki van belépve, és a Kijelentkezés gomb. */
+  function fiokMutat() {
+    const b = belepAdat(), f = $('fiok');
+    if (!f) return;
+    f.hidden = !b;
+    if (b) $('fiokNev').textContent = b.felh;
+  }
+  function kijelentkezes() { belepesTorol(); location.reload(); }
+  /** Lejárt / visszavont belépő menet közben: a belépési ablak, sikeres belépés után az oldal újratölt. */
+  function belepesLejart() { belepesTorol(); fiokMutat(); if (!$('belepes')) belepesMutat(() => location.reload(), 'A belépésed lejárt – lépj be újra.'); }
+  /** A belépési ablak; siker esetén az utana() indul (az oldal betöltése). */
+  function belepesMutat(utana, uzenet) {
+    document.body.classList.add('belepesmod');
+    let utolso = '';
+    try { utolso = localStorage.getItem(UTOLSO_FELH) || ''; } catch (e) { /* nem fontos */ }
+    const d = document.createElement('div');
+    d.id = 'belepes'; d.className = 'belepes';
+    d.innerHTML = '<form class="bkartya" id="bform" novalidate autocomplete="on">' +
+      '<div class="blogo"><i class="ti ti-lock" aria-hidden="true"></i></div>' +
+      '<h1>Bolti dokumentumtár</h1><p class="bal">Lépj be a felülvizsgálati dokumentumok és eszközlisták megtekintéséhez.</p>' +
+      '<label for="bfelh">Felhasználó</label>' +
+      '<div class="bmezo"><i class="ti ti-user" aria-hidden="true"></i><select id="bfelh" name="username" required>' +
+        '<option value="" disabled' + (utolso ? '' : ' selected') + '>Válaszd ki…</option>' +
+        FELHASZNALOK.map((f) => '<option' + (f === utolso ? ' selected' : '') + '>' + esc(f) + '</option>').join('') + '</select></div>' +
+      '<label for="bjelszo">Jelszó</label>' +
+      '<div class="bmezo"><i class="ti ti-key" aria-hidden="true"></i><input id="bjelszo" name="password" type="password" autocomplete="current-password" required>' +
+        '<button type="button" class="bmutat" id="bmutat" aria-label="Jelszó megjelenítése" title="Jelszó megjelenítése"><i class="ti ti-eye" aria-hidden="true"></i></button></div>' +
+      '<div class="bcaps" id="bcaps" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i>Be van kapcsolva a Caps Lock.</div>' +
+      '<label class="bmarad"><input type="checkbox" id="bmarad"><span>Maradjak bejelentkezve ezen a gépen (30 napig)</span></label>' +
+      '<div class="bhiba" id="bhiba" role="alert"' + (uzenet ? '' : ' hidden') + '><i class="ti ti-alert-triangle" aria-hidden="true"></i><span>' + esc(uzenet || '') + '</span></div>' +
+      '<button class="gomb bgomb" id="bgomb" type="submit"><i class="ti ti-login" aria-hidden="true"></i><span>Belépés</span></button>' +
+      '<p class="bsugo">Nincs hozzáférésed, vagy elfelejtetted a jelszót? ' +
+        '<a href="mailto:jacso.jozsef@lipotipekseg.hu?subject=' + encodeURIComponent('Bolti dokumentumtár – belépés') + '">Írj Jacsó Józsefnek</a></p>' +
+      '</form>';
+    document.querySelector('header.top').after(d);
+    const felh = $('bfelh'), jsz = $('bjelszo'), gomb = $('bgomb'), hiba = $('bhiba');
+    const hibaKi = (t) => { hiba.hidden = !t; hiba.querySelector('span').textContent = t || ''; };
+    (utolso ? jsz : felh).focus();
+    $('bmutat').onclick = () => {
+      const lat = jsz.type === 'password';
+      jsz.type = lat ? 'text' : 'password';
+      $('bmutat').innerHTML = '<i class="ti ' + (lat ? 'ti-eye-off' : 'ti-eye') + '" aria-hidden="true"></i>';
+      $('bmutat').setAttribute('aria-label', lat ? 'Jelszó elrejtése' : 'Jelszó megjelenítése');
+      jsz.focus();
+    };
+    const caps = (e) => { if (e.getModifierState) $('bcaps').hidden = !e.getModifierState('CapsLock'); };
+    jsz.addEventListener('keydown', caps); jsz.addEventListener('keyup', caps);
+    felh.onchange = () => { hibaKi(''); jsz.focus(); };
+    $('bform').onsubmit = async (e) => {
+      e.preventDefault();
+      if (!felh.value) { hibaKi('Válaszd ki a felhasználót.'); felh.focus(); return; }
+      if (!jsz.value) { hibaKi('Add meg a jelszót.'); jsz.focus(); return; }
+      hibaKi(''); gomb.disabled = true; gomb.classList.add('folyik');
+      gomb.querySelector('span').textContent = 'Belépés…';
+      try {
+        const x = await belepesHivas(felh.value, jsz.value, $('bmarad').checked);
+        belepesMentes(x, $('bmarad').checked);
+        d.remove(); document.body.classList.remove('belepesmod');
+        fiokMutat(); fejMeret();
+        utana();
+      } catch (err) {
+        hibaKi(err && err.message ? err.message : String(err));
+        gomb.disabled = false; gomb.classList.remove('folyik'); gomb.querySelector('span').textContent = 'Belépés';
+        $('bform').classList.remove('razas'); void $('bform').offsetWidth; $('bform').classList.add('razas');
+        jsz.select(); jsz.focus();
+      }
+    };
+  }
+  /** Indulás: érvényes belépővel azonnal, különben előbb a belépési ablak. */
+  function belepveIndul() {
+    if ($('kilep')) $('kilep').onclick = kijelentkezes;
+    if (belepAdat()) { fiokMutat(); indul(); } else belepesMutat(indul);
+  }
+
   // Google Sites oldalba ágyazva (a script.google.com keret maga is be van ágyazva) a Sites telefonon a keretet arányosan
   // kicsire veszi – ott egy gomb nyitja meg a teljes felületet új lapon (közvetlenül megnyitva ez nem jelenik meg)
   const ALKALMAZAS = location.origin + location.pathname;
@@ -1150,7 +1316,7 @@
     const fejFigyelo = window.ResizeObserver ? new ResizeObserver(fejMeret) : null;
     if (fejFigyelo) { fejFigyelo.observe(document.querySelector('.fej')); fejFigyelo.observe(document.querySelector('header.top')); }
     fejMeret();
-    indul();
+    belepveIndul();
   }
 </script>
 </body>
