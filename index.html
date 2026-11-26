@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795711897152";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795712360502";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -455,20 +455,38 @@
     line-height: 18px; padding: 13px 10px 13px; white-space: nowrap; text-align: center; color: #fff; background: var(--thHatter);
     border-top: 0; border-left: 0; border-bottom: 3px solid var(--thAkcent); border-right: 1px solid var(--thVonal); text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
   .tabla th:last-child { border-right: 0; }
-  /* a két szélső cella: a cella maga átlátszó, a háttér (lap színe, a sarok mögött) és a lekerekített barna réteg a szegélyt is fedi */
-  .tablakartya .tabla th:first-child, .tablakartya .tabla th:last-child { background: transparent; border-bottom-color: transparent; }
-  .tablakartya .tabla th:first-child { border-right-color: var(--thVonal); }
-  .tablakartya .tabla th:first-child::before, .tablakartya .tabla th:last-child::before { inset: 0 0 -3px 0; }
-  .tablakartya .tabla th:first-child::after, .tablakartya .tabla th:last-child::after { inset: 0 0 -3px 0; background: var(--thHatter);
-    border: 0; border-bottom: 3px solid var(--thAkcent); }
-  .tablakartya .tabla th:first-child::after { border-radius: 12px 0 0 0; }
-  .tablakartya .tabla th:last-child::after { border-radius: 0 12px 0 0; }
-  /* görgetés közben: a fejléc fölötti sáv a lap hátterével takarva (a felső panel takarójával átfedésben – nincs tört képpontnyi rés),
-     alatta árnyék, hogy a fejléc elváljon a listától */
+  /* a két szélső cella (2026.11.26. javítás: „Bolt / cím” és „Letöltés” eltért – a korábbi átlátszó cella + alárajzolt réteg 125%-os
+     nagyításnál fél képponttal elcsúszott): ugyanolyan valódi háttér és szegély, mint a többinél; a lekerekítést egy kis íves maszk adja
+     a sarokban (kívül a lap színe, belül átlátszó) – így görgetéskor a sarok mögött sem látszik át a lista */
+  .tablakartya .tabla th:first-child, .tablakartya .tabla th:last-child { background: var(--thHatter); border-bottom-color: var(--thAkcent); }
+  .tablakartya .tabla th:first-child::after, .tablakartya .tabla th:last-child::after { content: none; }
+  .tablakartya .tabla th:first-child::before, .tablakartya .tabla th:last-child::before { content: ""; position: absolute; inset: auto; top: 0;
+    width: 13px; height: 13px; z-index: auto; pointer-events: none; }
+  .tablakartya .tabla th:first-child::before { left: 0; background: radial-gradient(circle at 100% 100%, transparent 11.6px, var(--bg) 12.4px); }
+  .tablakartya .tabla th:last-child::before { right: 0; background: radial-gradient(circle at 0 100%, transparent 11.6px, var(--bg) 12.4px); }
+  /* görgetés közben: a fejléc fölötti sáv a lap hátterével takarva, alatta árnyék, hogy a fejléc elváljon a listától */
   body.gorget .tabla th { box-shadow: 0 -8px 0 0 var(--bg), 0 7px 9px -6px rgba(74, 40, 16, .45); }
   .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { top: calc(var(--topM, 0px) + var(--fejM, 0px) + var(--thH)); }
-  /* a felső panel lekerekített alsó sarkai mögött se látsszon át a lista: a takaró a panel alá is benyúlik (a panel mögött, z: -1) */
-  .fej::after { top: calc(100% - 18px); height: calc(var(--fejRes, 14px) + 18px); z-index: -1; }
+  /* a rögzített felső panel alatti rés (2026.11.26. javítás: a korábbi takaró a panel alsó szegélyére és sarkaira is rárajzolt, a panel
+     alja „levágottnak” látszott): a takaró a panel saját, lefelé eltolt, lap színű árnyéka – a panel MÖGÖTT van, a panel szegélye,
+     lekerekítése és árnyéka érintetlen, a sarkok mögötti részt és a rést is fedi */
+  .fej::after, body.gorget .fej::after { content: none; display: none; }
+  body.gorget .fej { box-shadow: 0 4px 14px rgba(74, 40, 16, .10), 0 var(--fejRes, 14px) 0 0 var(--bg); }
+
+  /* a bolt lapján a sor jobb oldala (2026.11.26., felhasználó: „érvényes, megtekintés gomb legyen ugyanakkora, mint a letöltés gomb”):
+     ahol letöltés is van, az állapotjelvény és a megtekintés gomb is a Letöltés gomb magasságú, ugyanolyan lekerekítéssel */
+  :root { --sorGombM: 46px; }
+  .tetel .jobb:has(.gomb), .kiv .jobb:has(.gomb) { align-items: center; }
+  .tetel .jobb:has(.gomb) > .badge, .kiv .jobb:has(.gomb) > .badge { min-height: var(--sorGombM); padding: 0 16px; font-size: 16px; border-radius: 12px; gap: 7px; }
+  .tetel .jobb:has(.gomb) > .badge i, .kiv .jobb:has(.gomb) > .badge i { font-size: 18px; }
+  .tetel .jobb .gombok, .kiv .jobb .gombok { align-items: center; gap: 8px; }
+  .tetel .jobb .gomb, .kiv .jobb .gomb { min-height: var(--sorGombM); border-radius: 12px; }
+  .tetel .jobb .gomb.nez:not(.kicsi), .kiv .jobb .gomb.nez:not(.kicsi) { min-width: var(--sorGombM); padding: 0; justify-content: center; }
+  .tetel .jobb .gomb.nez i, .kiv .jobb .gomb.nez i { font-size: 21px; }
+
+  /* jelmagyarázat: az állapotok cellákban, vékony elválasztó szegélyekkel (2026.11.26.) */
+  footer .jelek { gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fffdf9; }
+  footer .jelek > div { padding: 12px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
   /* kéttónusú ikonok: a halvány réteg kicsit erősebb, a méret a régiekével egyezik */
   .ph-duotone { line-height: 1; vertical-align: -0.125em; }
   .ph-duotone.ph-duotone::before { opacity: .28; }
