@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795713447288";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795713581000";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -519,6 +519,23 @@
   .bmutat { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border: 0; border-radius: 10px; background: transparent;
     color: var(--barna); display: grid; place-items: center; font-size: 20px; cursor: pointer; }
   .bmutat:hover { background: var(--krem); }
+  /* saját lenyíló lista (felhasználó): lekerekített panel, árnyék, a kiválasztott pipával */
+  .blgomb { width: 100%; min-height: 54px; display: flex; align-items: center; gap: 8px; font: inherit; font-size: 18px; color: var(--kakao); text-align: left;
+    padding: 10px 14px 10px 44px; border: 1px solid #d8bf98; border-radius: 12px; background: #fff; cursor: pointer; }
+  .blgomb > span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .blgomb > span.ures { color: var(--hint); }
+  .blgomb .blnyil { font-size: 18px; color: var(--barna); transition: transform .15s ease; }
+  .blista.nyitva .blnyil { transform: rotate(180deg); }
+  .blgomb:focus-visible, .blista.nyitva .blgomb { outline: 2px solid var(--gomb); outline-offset: 0; border-color: var(--gomb); }
+  .blpanel { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20; margin: 0; padding: 6px; list-style: none; background: #fff;
+    border: 1px solid #d8bf98; border-radius: 12px; box-shadow: 0 14px 30px rgba(74, 40, 16, .20); max-height: 260px; overflow: auto; }
+  .blpanel[hidden] { display: none; }
+  .blpanel:focus { outline: none; }
+  .blpanel li { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 9px; font-size: 17px; color: var(--kakao); cursor: pointer; }
+  .blpanel li i { width: 18px; font-size: 17px; color: var(--barna); visibility: hidden; flex: none; }
+  .blpanel li[aria-selected="true"] { font-weight: 700; }
+  .blpanel li[aria-selected="true"] i { visibility: visible; }
+  .blpanel li.akt { background: var(--krem); }
   .bcaps { display: flex; align-items: center; gap: 6px; margin: -8px 0 12px; color: #9a5b00; font-size: 14.5px; font-weight: 700; }
   .bcaps[hidden] { display: none; }
   .bkartya .bmarad { display: flex; align-items: center; gap: 10px; font-weight: 400; font-size: 15.5px; color: var(--kakao); margin: 4px 0 16px; cursor: pointer; }
@@ -616,7 +633,7 @@
       'archive': 'archive', 'alert-triangle': 'warning', 'tools-kitchen-2': 'fork-knife', 'droplet': 'drop', 'helmet': 'hard-hat', 'bolt': 'lightning',
       'scale-outline': 'scales', 'cash-register': 'cash-register', 'file-certificate': 'certificate', 'bug': 'bug', 'fire-extinguisher': 'fire-extinguisher',
       'credit-card-pay': 'credit-card', 'printer': 'printer', 'arrows-exchange': 'arrows-left-right', 'receipt-2': 'receipt', 'trash': 'trash',
-      'user': 'user', 'key': 'key', 'login': 'sign-in', 'logout': 'sign-out', 'eye-off': 'eye-slash',
+      'user': 'user', 'key': 'key', 'chevron-down': 'caret-down', 'login': 'sign-in', 'logout': 'sign-out', 'eye-off': 'eye-slash',
       'minus': 'minus-circle', 'circle-minus': 'minus-circle', 'clock-pause': 'pause-circle', 'hourglass-empty': 'hourglass-medium', 'building': 'buildings',
     };
     const csere = (i) => {
@@ -1231,10 +1248,16 @@
     d.innerHTML = '<form class="bkartya" id="bform" novalidate autocomplete="on">' +
       '<div class="blogo"><i class="ti ti-lock" aria-hidden="true"></i></div>' +
       '<h1>Bolti dokumentumtár</h1><p class="bal">Lépj be a felülvizsgálati dokumentumok és eszközlisták megtekintéséhez.</p>' +
-      '<label for="bfelh">Felhasználó</label>' +
-      '<div class="bmezo"><i class="ti ti-user" aria-hidden="true"></i><select id="bfelh" name="username" required>' +
-        '<option value="" disabled' + (utolso ? '' : ' selected') + '>Válaszd ki…</option>' +
-        FELHASZNALOK.map((f) => '<option' + (f === utolso ? ' selected' : '') + '>' + esc(f) + '</option>').join('') + '</select></div>' +
+      // saját lenyíló lista (2026.11.26., felhasználó: „ez a lenyíló menü alja is lekerekített legyen” – a böngésző saját listája nem
+      // formázható): gomb + lista, billentyűzettel is (nyilak, Enter, Esc); az érték a rejtett select-ben
+      '<label id="bfelhCimke" for="bfelhGomb">Felhasználó</label>' +
+      '<div class="bmezo blista" id="blista"><i class="ti ti-user" aria-hidden="true"></i>' +
+        '<button type="button" class="blgomb" id="bfelhGomb" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bfelhCimke bfelhSzoveg">' +
+          '<span id="bfelhSzoveg" class="ures">Válaszd ki…</span><i class="ti ti-chevron-down blnyil" aria-hidden="true"></i></button>' +
+        '<ul class="blpanel" id="bfelhLista" role="listbox" tabindex="-1" aria-labelledby="bfelhCimke" hidden>' +
+          FELHASZNALOK.map((f, i) => '<li role="option" id="bfo' + i + '" data-v="' + esc(f) + '" aria-selected="false"><i class="ti ti-check" aria-hidden="true"></i><span>' + esc(f) + '</span></li>').join('') +
+        '</ul>' +
+        '<select id="bfelh" name="username" hidden><option value=""></option>' + FELHASZNALOK.map((f) => '<option>' + esc(f) + '</option>').join('') + '</select></div>' +
       '<label for="bjelszo">Jelszó</label>' +
       '<div class="bmezo"><i class="ti ti-key" aria-hidden="true"></i><input id="bjelszo" name="password" type="password" autocomplete="current-password" required>' +
         '<button type="button" class="bmutat" id="bmutat" aria-label="Jelszó megjelenítése" title="Jelszó megjelenítése"><i class="ti ti-eye" aria-hidden="true"></i></button></div>' +
@@ -1248,7 +1271,41 @@
     document.querySelector('header.top').after(d);
     const felh = $('bfelh'), jsz = $('bjelszo'), gomb = $('bgomb'), hiba = $('bhiba');
     const hibaKi = (t) => { hiba.hidden = !t; hiba.querySelector('span').textContent = t || ''; };
-    (utolso ? jsz : felh).focus();
+    // a saját lenyíló lista működése
+    const lgomb = $('bfelhGomb'), lpanel = $('bfelhLista'), opciok = [...lpanel.children];
+    let aktiv = -1;
+    const valaszt = (v) => {
+      felh.value = FELHASZNALOK.indexOf(v) >= 0 ? v : '';
+      $('bfelhSzoveg').textContent = felh.value || 'Válaszd ki…';
+      $('bfelhSzoveg').classList.toggle('ures', !felh.value);
+      opciok.forEach((o) => o.setAttribute('aria-selected', String(o.dataset.v === felh.value)));
+    };
+    const jelol = (i) => {
+      aktiv = i;
+      opciok.forEach((o, j) => o.classList.toggle('akt', j === i));
+      if (i >= 0) { lpanel.setAttribute('aria-activedescendant', opciok[i].id); opciok[i].scrollIntoView({ block: 'nearest' }); }
+    };
+    const nyit = () => {
+      lpanel.hidden = false; lgomb.setAttribute('aria-expanded', 'true'); $('blista').classList.add('nyitva');
+      jelol(Math.max(0, opciok.findIndex((o) => o.dataset.v === felh.value))); lpanel.focus();
+    };
+    const zar = (fokusz) => { lpanel.hidden = true; lgomb.setAttribute('aria-expanded', 'false'); $('blista').classList.remove('nyitva'); if (fokusz) lgomb.focus(); };
+    const kesz = (i) => { valaszt(opciok[i].dataset.v); zar(false); hibaKi(''); jsz.focus(); };
+    lgomb.onclick = () => (lpanel.hidden ? nyit() : zar(true));
+    lgomb.onkeydown = (e) => { if (['ArrowDown', 'ArrowUp', 'Enter', ' '].indexOf(e.key) >= 0) { e.preventDefault(); nyit(); } };
+    lpanel.onkeydown = (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); jelol(Math.min(opciok.length - 1, aktiv + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); jelol(Math.max(0, aktiv - 1)); }
+      else if (e.key === 'Home') { e.preventDefault(); jelol(0); }
+      else if (e.key === 'End') { e.preventDefault(); jelol(opciok.length - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (aktiv >= 0) kesz(aktiv); }
+      else if (e.key === 'Escape') { e.preventDefault(); zar(true); }
+      else if (e.key === 'Tab') zar(false);
+    };
+    opciok.forEach((o, i) => { o.onmousemove = () => jelol(i); o.onclick = () => kesz(i); });
+    document.addEventListener('mousedown', (e) => { if (!lpanel.hidden && !$('blista').contains(e.target)) zar(false); });
+    valaszt(utolso);
+    (utolso ? jsz : lgomb).focus();
     $('bmutat').onclick = () => {
       const lat = jsz.type === 'password';
       jsz.type = lat ? 'text' : 'password';
@@ -1258,10 +1315,9 @@
     };
     const caps = (e) => { if (e.getModifierState) $('bcaps').hidden = !e.getModifierState('CapsLock'); };
     jsz.addEventListener('keydown', caps); jsz.addEventListener('keyup', caps);
-    felh.onchange = () => { hibaKi(''); jsz.focus(); };
     $('bform').onsubmit = async (e) => {
       e.preventDefault();
-      if (!felh.value) { hibaKi('Válaszd ki a felhasználót.'); felh.focus(); return; }
+      if (!felh.value) { hibaKi('Válaszd ki a felhasználót.'); lgomb.focus(); return; }
       if (!jsz.value) { hibaKi('Add meg a jelszót.'); jsz.focus(); return; }
       hibaKi(''); gomb.disabled = true; gomb.classList.add('folyik');
       gomb.querySelector('span').textContent = 'Belépés…';
