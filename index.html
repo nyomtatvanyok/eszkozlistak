@@ -213,6 +213,7 @@
   .tabla i.k { color: var(--brand); margin-right: 4px; }
   .tabla .badge { padding: 1px 9px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
   .tabla .badge i { font-size: 13px; }
+  .tabla .badge.ket { border-radius: 10px; padding: 3px 10px; line-height: 1.2; text-align: left; white-space: nowrap; }
   .tabla td.azon-o { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; white-space: normal; }
   .tabla td.azon-o .a1 { white-space: nowrap; }
   .tabla td.azon-o .sub { font-size: 11.5px; }
@@ -385,7 +386,8 @@
         }
         if (n > i) { p = Math.max(p, TOLTO_HATAR[Math.min(n, lepesek.length)]); i = n; t0 = Date.now(); kiir(); }
       },
-      szunet: () => new Promise((ok) => requestAnimationFrame(() => setTimeout(ok, 140))),
+      // sima időzítő (a requestAnimationFrame háttérben lévő lapon áll – ott a betöltés megakadna)
+      szunet: () => new Promise((ok) => setTimeout(ok, 140)),
       kesz() {
         ctl.lep(lepesek.length); p = 100; kiir(); el.classList.add('kesz'); clearInterval(ora);
         return new Promise((ok) => setTimeout(ok, 280));
@@ -532,8 +534,11 @@
       '<ol class="idovonal">' + jelen + korabbi + '</ol></details>';
   }
 
+  /** Külső kezelésű tétel: nem mi kezeljük – a még fel nem vett gép helyőrző-adatai (Beüzemelésre vár stb.) nem kellenek. */
+  const kulsoTetel = (s) => /^Külső kezelésű$/i.test(String(s.allapot || '').trim());
   function tetelSor(s, k, ceg, bolt) {
-    const al = [eszkJel(s.eszk), s.azon ? (k.eszkoz ? '<span class="azon" title="Azonosító">' + esc(s.azon) + '</span>' : esc(s.azon)) : '',
+    const kulso = kulsoTetel(s);
+    const al = [kulso && !s.azon ? '' : eszkJel(s.eszk), s.azon ? (k.eszkoz ? '<span class="azon" title="Azonosító">' + esc(s.azon) + '</span>' : esc(s.azon)) : '',
       s.dok && s.dok.ceg ? '<span class="ceg" title="A cég dokumentuma – a cég minden boltjára vonatkozik">' + esc(ceg) + '</span>' : ''].filter(Boolean);
     const mezok = [], aktiv = s.szin !== 'gray' && s.szin !== 'info';
     if (s.dok) {
@@ -552,7 +557,7 @@
     const jel = s.allapot ? '<span class="badge b-' + esc(s.szin) + '">' + (SZIN_IKON[s.szin] ? '<i class="ti ti-' + SZIN_IKON[s.szin] + '" aria-hidden="true"></i>' : '') + esc(s.allapot) + '</span>' : '';
     const gomb = s.dok ? '<span class="gombok">' + nezGomb(s.dok.id, true) + '<button class="gomb" data-id="' + esc(s.dok.id) + '"><i class="ti ti-download" aria-hidden="true"></i>Letöltés</button></span>' : '';
     // még fel nem vett gép (helyőrző: nincs azonosító, nincs dokumentum) – mint a Banktermináloknál: „Még nincs rögzített mérleg”
-    const helyorzo = k.eszkoz && !s.azon && !s.dok && s.cim === k.kat;
+    const helyorzo = k.eszkoz && !s.azon && !s.dok && s.cim === k.kat && !kulso;
     const cim = helyorzo ? 'Még nincs rögzített ' + k.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
     return '<div class="tetel"><div class="fo"><div class="c">' + esc(cim) + '</div>' + (al.length ? '<div class="a">' + al.join('') + '</div>' : '') + '</div>' +
       '<div class="jobb">' + jel + gomb + '</div>' +
@@ -627,7 +632,10 @@
     if (!s.allapot) return '';
     const kv = s.kivont ? KIV_ALL[s.allapot] : null, szin = kv ? kv[0] : (s.szin || 'gray');
     const ik = kv ? kv[1] : s.terminal ? TERM_IKON[s.allapot] : SZIN_IKON[szin];
-    return '<span class="badge b-' + esc(szin) + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + esc(s.allapot) + '</span>';
+    // a hosszú állapot két sorban (2026.11.26.: „Hamarosan esedékes mehet 2 sorban … ez az oszlop lehet vékonyabb”)
+    const ket = /^(Hamarosan esedékes|Másik boltba átadva)$/.test(s.allapot);
+    const szoveg = ket ? esc(s.allapot).replace(/ (\S+)$/, '<br>$1') : esc(s.allapot);
+    return '<span class="badge b-' + esc(szin) + (ket ? ' ket' : '') + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + (ket ? '<span>' + szoveg + '</span>' : szoveg) + '</span>';
   }
   function szur() {
     const szavak = norm($('q').value).split(/\s+/).filter(Boolean), c = $('fceg').value, b = $('fbolt').value, k = $('fkat').value;
@@ -649,7 +657,8 @@
       const kvSor = kv ? [kv.hely ? '→ ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
       const datum = s.datum ? (s.uzembe ? 'üzembe h.: ' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
       // még fel nem vett gép (nincs azonosító, a tétel neve a kategória): mint a bolt oldalán, „Még nincs rögzített …”
-      const cim = !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
+      const kulsoHely = !s.kivont && !s.terminal && !s.azon && kulsoTetel(s);
+      const cim = !kulsoHely && !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
       const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
           : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') +
@@ -659,7 +668,7 @@
       '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + '">' + fej +
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
-      '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
+      '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
         (kv ? (kvSor ? '<span class="kv">' + esc(kvSor) + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
       // azonosító fix szélességű betűvel; bankterminálnál a TID alatt kisebben az S/N és a MID
       '<td class="d azon-o' + (s.azon ? '' : ' ures') + '"><span class="a1">' + esc(s.azon || '') + '</span>' + 
