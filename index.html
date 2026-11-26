@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795714552419";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795714594850";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -551,9 +551,11 @@
   .fmcimek { flex: 1; }
   .fmcimek h2 { margin: 0; font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 22px; color: var(--barna); }
   .fmcimek p { margin: 2px 0 0; color: var(--sugo); font-size: 15px; }
-  .fmzar { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--morzsa); background: #fff; color: var(--barna); display: grid; place-items: center;
-    font-size: 22px; cursor: pointer; flex: none; }
-  .fmzar:hover { background: var(--krem); }
+  /* bezárás (2026.11.26., felhasználó: „az az X nem tetszik, csúnya”): vékony vonalas X, keret nélkül, kerek; fölé állva halvány háttér */
+  .fmzar { width: 42px; height: 42px; border-radius: 50%; border: 0; background: transparent; color: var(--sugo); display: grid; place-items: center;
+    font-size: 24px; cursor: pointer; flex: none; transition: background .15s ease, color .15s ease; }
+  .fmzar:hover { background: var(--krem); color: var(--barna); }
+  .fmzar:focus-visible { outline: 2px solid var(--gomb); outline-offset: 2px; }
   .fmtorzs { padding: 18px 22px 22px; }
   .fmuzenet { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: 10px; margin-bottom: 14px; font-weight: 700; font-size: 15px;
     background: #e8f3e2; color: #2e5e1e; border: 1px solid #c9e2bd; }
@@ -698,7 +700,7 @@
       'archive': 'archive', 'alert-triangle': 'warning', 'tools-kitchen-2': 'fork-knife', 'droplet': 'drop', 'helmet': 'hard-hat', 'bolt': 'lightning',
       'scale-outline': 'scales', 'cash-register': 'cash-register', 'file-certificate': 'certificate', 'bug': 'bug', 'fire-extinguisher': 'fire-extinguisher',
       'credit-card-pay': 'credit-card', 'printer': 'printer', 'arrows-exchange': 'arrows-left-right', 'receipt-2': 'receipt', 'trash': 'trash',
-      'user': 'user', 'key': 'key', 'chevron-down': 'caret-down', 'users': 'users', 'user-plus': 'user-plus', 'x': 'x', 'login': 'sign-in', 'logout': 'sign-out', 'eye-off': 'eye-slash',
+      'user': 'user', 'key': 'key', 'chevron-down': 'caret-down', 'users': 'users', 'user-plus': 'user-plus', // az X marad a vékony vonalas (a kéttónusú kitöltött négyzetet rajzolt mögé) 'login': 'sign-in', 'logout': 'sign-out', 'eye-off': 'eye-slash',
       'minus': 'minus-circle', 'circle-minus': 'minus-circle', 'clock-pause': 'pause-circle', 'hourglass-empty': 'hourglass-medium', 'building': 'buildings',
     };
     const csere = (i) => {
