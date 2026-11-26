@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795734229559";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795734598693";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -602,6 +602,7 @@
   /* bolt oldala (2026.11.26.): a lábléc (jelmagyarázat) a bolt kártyáinak szélességében; a „… · utolsó frissítve” felirat egy sorban */
   body:not(.szeles) footer { max-width: 900px; }
   main.keskeny .fej .al { white-space: nowrap; }
+  .tabla .sub.reszlet { display: block; text-align: center; line-height: 1.3; }
   #al.frissul::after { content: " · frissítés…"; color: var(--hint); }
   .fmjel.tulaj { background: #f3e7d1; color: var(--kakao); }
   .fmgombok { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1199,7 +1200,7 @@
     $('tsor').innerHTML = l.length ? l.map((s, i) => {
       // kivont eszköz: a megjegyzésből röviden az új helye vagy az esemény dátuma; az utolsó felülvizsgálat a Dátum oszlopba kerül
       const kv = s.kivont ? kivontAdat({ megj: s.reszlet }) : null;
-      const kvSor = kv ? [kv.hely ? '→ ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
+      const kvSor = kv ? [kv.hely ? 'Átv.: ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
       const datum = s.datum ? (s.uzembe ? 'üzembe h.:\n' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
       // még fel nem vett gép (nincs azonosító, a tétel neve a kategória): mint a bolt oldalán, „Még nincs rögzített …”
       const kulsoHely = !s.kivont && !s.terminal && !s.azon && kulsoTetel(s);
@@ -1215,7 +1216,9 @@
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
-        (kv ? (kvSor ? ' <span class="kv">' + kvSor.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join('<span class="sep"> · </span>') + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
+        (kv ? (kvSor ? ' <span class="kv">' + kvSor.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join('<span class="sep"> · </span>') + '</span>' : '') : s.reszlet ? (s.terminal && !s.azon
+          // (2026.11.26.) a még fel nem vett / nem kezelt eszköz magyarázata külön sorban, pont nélkül; a terminál szolgáltatója marad egy sorban
+          ? '<span class="sub reszlet">' + esc(s.reszlet) + '</span>' : ' <span class="sub">· ' + esc(s.reszlet) + '</span>') : '') + '</td>' +
       // azonosító fix szélességű betűvel; bankterminálnál a TID alatt kisebben az S/N és a MID
       '<td class="d azon-o' + (s.azon ? '' : ' ures') + '"><span class="a1">' + esc(s.azon || '') + '</span>' + 
         // S/N és MID: csak a „ · ” helyén törhet (a „MID:” és a szám együtt marad)
