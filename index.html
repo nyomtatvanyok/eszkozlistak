@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795714594850";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795714668350";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -515,6 +515,8 @@
   .bmezo select, .bmezo input { width: 100%; min-height: 54px; font: inherit; font-size: 18px; color: var(--kakao); padding: 10px 14px 10px 44px;
     border: 1px solid #d8bf98; border-radius: 12px; background: #fff; }
   .bmezo input { padding-right: 54px; }
+  /* üres mezőben halvány segédszöveg (mint a „Válaszd ki a felhasználót”) – gépeléskor eltűnik, törléskor visszajön */
+  .bmezo input::placeholder { color: var(--hint); opacity: 1; }
   .bmezo select:focus, .bmezo input:focus { outline: 2px solid var(--gomb); outline-offset: 0; border-color: var(--gomb); }
   .bmutat { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border: 0; border-radius: 10px; background: transparent;
     color: var(--barna); display: grid; place-items: center; font-size: 20px; cursor: pointer; }
@@ -1350,7 +1352,7 @@
         '<ul class="blpanel" id="bfelhLista" role="listbox" tabindex="-1" aria-labelledby="bfelhCimke" hidden></ul>' +
         '<select id="bfelh" name="username" hidden></select></div>' +
       '<label for="bjelszo">Jelszó</label>' +
-      '<div class="bmezo"><i class="ti ti-key" aria-hidden="true"></i><input id="bjelszo" name="password" type="password" autocomplete="current-password" required>' +
+      '<div class="bmezo"><i class="ti ti-key" aria-hidden="true"></i><input id="bjelszo" name="password" type="password" autocomplete="current-password" placeholder="Kezdd el begépelni a jelszót" required>' +
         '<button type="button" class="bmutat" id="bmutat" aria-label="Jelszó megjelenítése" title="Jelszó megjelenítése"><i class="ti ti-eye" aria-hidden="true"></i></button></div>' +
       '<div class="bcaps" id="bcaps" hidden><i class="ti ti-alert-triangle" aria-hidden="true"></i>Be van kapcsolva a Caps Lock.</div>' +
       '<label class="bmarad"><input type="checkbox" id="bmarad"><span>Maradjak bejelentkezve ezen a gépen (legfeljebb 12 óráig)</span></label>' +
