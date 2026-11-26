@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Bolti dokumentumtár</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%231f4e79%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #f4f6f9; --panel: #fff; --line: #dde3ea; --text: #1d2733; --muted: #66727f; --hint: #8a95a1;
+    --brand: #1f4e79; --brand-soft: #e8f0f8;
+    --ok: #2e5e1e; --ok-bg: #e3f1dc; --warn: #7a5d00; --warn-bg: #fff4cc; --err: #a32d2d; --err-bg: #fcebeb;
+    --miss: #8a4b08; --miss-bg: #fdebd3; --gray: #5f5e5a; --gray-bg: #eeede8;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; font: 15px/1.5 "Segoe UI", Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); }
+  /* a kék sáv görgetéskor is fent marad; alatta a fehér fejléc, alatta a táblázat oszlopfejléce */
+  header.top { background: var(--brand); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 6; }
+  header.top .in { max-width: 1120px; margin: 0 auto; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  header.top .cim { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+  header.top .szerzo { font-size: 12.5px; color: #c9d8e8; }
+  main { max-width: 1120px; margin: 0 auto; padding: 16px; }
+  main.keskeny { max-width: 860px; }
+  /* a bolt neve és a választó görgetéskor is fent marad */
+  .fej { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px;
+    position: sticky; top: var(--topM, 0px); z-index: 5; box-shadow: 0 4px 12px rgba(29, 39, 51, .08); }
+  .fej .vissza { align-self: flex-end; min-width: 0; padding: 8px 12px; }
+  .eszk { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 10px; margin-left: 8px; vertical-align: 1px;
+    border: 1px solid currentColor; white-space: nowrap; }
+  .eszk::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .e-ok { color: var(--ok); } .e-info { color: var(--brand); } .e-gray { color: var(--gray); }
+  .fej .ikon { font-size: 25px; color: var(--brand); background: var(--brand-soft); width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; flex: none; }
+  /* ikoncsempe: kategóriánként saját színnel (--c: ikon, --cb: háttér) */
+  .it { --c: var(--brand); --cb: var(--brand-soft); width: 36px; height: 36px; border-radius: 10px; display: inline-grid; place-items: center; flex: none;
+    background: var(--cb); color: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .04); }
+  .it i, .kfej .it i { font-size: 20px; color: var(--c); }
+  .it.kis { width: 32px; height: 32px; border-radius: 9px; } .it.kis i { font-size: 18px; }
+  .kfej .db { font-size: 12.5px; font-weight: 600; color: var(--muted); background: #eef1f4; border-radius: 10px; padding: 1px 9px; }
+  /* eladott, selejtezett, átadott eszközök: eszközönként fejléc + adatlap */
+  .kiv { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; padding: 13px 16px; border-bottom: 1px solid #edf0f3; }
+  .kiv:last-child { border-bottom: 0; }
+  .kiv .it { grid-row: 1 / span 2; align-self: start; }
+  .kiv .fo .c { font-weight: 600; font-size: 14.5px; }
+  .kiv .fo .a { color: var(--muted); font-size: 13px; }
+  .kiv .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f1f4f7; border-radius: 5px; padding: 0 6px; }
+  .kiv .jobb { align-self: start; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .kiv .jobb .badge { display: inline-flex; align-items: center; gap: 5px; }
+  .kiv .jobb .badge i { font-size: 14px; }
+  .kiv .adat { grid-column: 2 / -1; margin: 2px 0 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 14px; font-size: 13px;
+    background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; padding: 8px 12px; }
+  .kiv .adat dt { color: var(--muted); }
+  .kiv .adat dd { margin: 0; }
+  .kiv .adat a { color: var(--brand); font-weight: 600; text-decoration: none; }
+  .kiv .adat a:hover { text-decoration: underline; }
+  .kiv .adat .ceg { margin-left: 4px; }
+  .b-sold { background: #efe9fb; color: #5b21b6; }
+  /* a kategóriák tételei (2026.11.16., a kivont eszközök mintájára): név + állapot / azonosító, jobbra jelvény és letöltés, alatta adatdoboz */
+  .tetel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 16px; border-bottom: 1px solid #edf0f3; }
+  .tetel .fo .c { font-weight: 600; font-size: 14.5px; }
+  .tetel .fo .a { color: var(--muted); font-size: 13px; margin-top: 3px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .tetel .fo .a .eszk, .tetel .fo .a .ceg { margin-left: 0; }
+  .tetel .jobb { align-self: start; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .tetel .jobb .badge { display: inline-flex; align-items: center; gap: 5px; }
+  .tetel .jobb .badge i { font-size: 14px; }
+  .tetel .mezok { grid-column: 1 / -1; margin: 2px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 4px 18px;
+    background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; padding: 8px 12px; }
+  .tetel .mezok dt { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+  .tetel .mezok dd { margin: 0; font-size: 13.5px; }
+  .tetel .mezok dd.hiany { color: var(--miss); font-weight: 600; }
+  .tetel .mezok dd.kod { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13.5px; letter-spacing: .2px; }
+  .kartya > .tetel:last-of-type { border-bottom: 0; }
+  .tetel .mezok dd .sub { color: var(--muted); font-size: 12px; }
+  /* az eszköz előélete (2026.11.16.): lenyitható idővonal – jelenlegi hely, majd a korábbiak a legújabbtól */
+  details.elozmeny { grid-column: 1 / -1; border-top: 0; }
+  details.elozmeny > summary { padding: 2px 0; font-size: 13px; }
+  details.elozmeny > summary .hol { color: var(--muted); font-weight: 400; }
+  .idovonal { list-style: none; margin: 6px 0 0; padding: 10px 12px 2px; background: #f7f9fb; border: 1px solid #edf0f3; border-radius: 8px; }
+  .idovonal li { position: relative; padding: 0 0 12px 22px; }
+  .idovonal li::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #9aa6b2; box-sizing: border-box; }
+  .idovonal li::after { content: ""; position: absolute; left: 4px; top: 17px; bottom: 1px; width: 2px; background: #cdd5de; }
+  .idovonal li:last-child::after { display: none; }
+  .idovonal li.most::before { background: var(--brand); border-color: var(--brand); }
+  .idovonal .hb { font-size: 13.5px; font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+  .idovonal .hb .ceg { margin-left: 0; }
+  .idovonal .hb a { color: var(--brand); text-decoration: none; } .idovonal .hb a:hover { text-decoration: underline; }
+  .idovonal .hb .badge { padding: 0 8px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px; } .idovonal .hb .badge i { font-size: 12.5px; }
+  .idovonal .hb .eszk { margin-left: 0; font-size: 11px; padding: 0 7px; }
+  .idovonal .hr { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .idovonal .hr b { color: var(--text); font-weight: 600; }
+  .idovonal .hd { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin-top: 3px; }
+  .idovonal .hd .d { font-variant-numeric: tabular-nums; color: var(--text); white-space: nowrap; }
+  .idovonal .hd .n { flex: 1; min-width: 0; }
+  .idovonal .hd .gomb.kicsi { padding: 1px 7px; font-size: 12px; }
+  .idovonal .hd .zar { color: var(--hint); font-size: 12px; }
+  .term details.elozmeny { margin-top: 2px; }
+  .azon { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f1f4f7; border-radius: 5px; padding: 0 6px; }
+  /* bankterminálok: a bolt közös kódjai felül, alattuk terminálonként a típus, az állapot és a TID / S/N */
+  .tkozos { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0; padding: 9px 16px; background: #fbfcfd; border-bottom: 1px solid #edf0f3; }
+  .tkozos dt, .kodok dt { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+  .tkozos dd, .kodok dd { margin: 0; font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13.5px; color: var(--text); }
+  .tkozos dd.nev { font-family: inherit; font-weight: 600; font-size: 13.5px; color: var(--brand); }
+  .term { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #edf0f3; }
+  .term:last-child { border-bottom: 0; }
+  .term .c { font-weight: 600; font-size: 14.5px; }
+  .term .a { color: var(--muted); font-size: 13px; }
+  .term .badge, .kiv .jobb .badge { display: inline-flex; align-items: center; gap: 5px; }
+  .term .badge i { font-size: 14px; }
+  .term .kodok { grid-column: 1 / -1; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 20px; max-width: 640px; }
+  .term.ures .c { color: var(--muted); font-weight: 600; }
+  .fej .nev { flex: 1; min-width: 200px; }
+  .fej h1 { margin: 0; font-size: 20px; font-weight: 600; }
+  .fej .al { margin: 0; color: var(--muted); font-size: 13px; }
+  .fej .cegsor { margin: 1px 0 0; color: var(--brand); font-size: 14px; font-weight: 600; }
+  .fej label, .szuro label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  select, input[type=search] { font: inherit; font-size: 15px; padding: 9px 12px; border: 1px solid #b9c3cd; border-radius: 8px; background: #fff; max-width: 100%; }
+  select { min-width: 260px; cursor: pointer; }
+  select:focus, input[type=search]:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .kartya { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .kfej { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: #f7f9fb; border-bottom: 1px solid var(--line); }
+  .kfej i { font-size: 22px; color: var(--brand); }
+  .kfej h2 { margin: 0; font-size: 16px; font-weight: 600; flex: 1; }
+  .sor { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid #edf0f3; }
+  .sor:last-child { border-bottom: 0; }
+  .sor .c { font-weight: 600; font-size: 14.5px; }
+  .sor .a { color: var(--muted); font-size: 13px; }
+  .badge { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 3px 11px; border-radius: 12px; white-space: nowrap; }
+  .b-ok { background: var(--ok-bg); color: var(--ok); } .b-warn { background: var(--warn-bg); color: var(--warn); }
+  .b-err { background: var(--err-bg); color: var(--err); } .b-miss { background: var(--miss-bg); color: var(--miss); }
+  .b-gray { background: var(--gray-bg); color: var(--gray); } .b-info { background: var(--brand-soft); color: var(--brand); }
+  .fej h1 .badge { vertical-align: 3px; margin-left: 8px; }
+  .gomb { font: inherit; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
+    border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; white-space: nowrap; min-width: 118px; justify-content: center; }
+  .gomb:hover { background: #173d60; }
+  .gomb.kicsi { min-width: 0; padding: 5px 10px; font-size: 13px; background: #fff; color: var(--brand); }
+  .gomb.kicsi:hover { background: var(--brand-soft); }
+  .gomb[aria-busy=true] { opacity: .7; cursor: progress; }
+  /* megtekintés (szem) a letöltés mellett: fehér, ikonos gomb; a kettő együtt marad (telefonon is) */
+  .gombok { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+  .gomb.nez { min-width: 0; background: #fff; color: var(--brand); }
+  .gomb.nez:hover { background: var(--brand-soft); }
+  .gomb.nez:not(.kicsi) { padding: 8px 11px; }
+  .gomb.nez i { font-size: 17px; }
+  .gomb.kicsi.nez i { font-size: 15px; }
+  .nincs { color: var(--hint); font-size: 13px; min-width: 118px; text-align: center; }
+  details { border-top: 1px solid var(--line); }
+  summary { cursor: pointer; padding: 9px 16px; color: var(--brand); font-size: 13.5px; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 6px; }
+  summary::-webkit-details-marker { display: none; }
+  summary i { transition: transform .15s; }
+  details[open] summary i { transform: rotate(90deg); }
+  .reg { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 16px 6px 36px; font-size: 13.5px; border-top: 1px solid #f1f3f6; }
+  .reg .d { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ceg { font-size: 11.5px; color: var(--brand); background: var(--brand-soft); border-radius: 8px; padding: 1px 7px; margin-left: 6px; font-weight: 600; }
+  .info { color: var(--muted); font-size: 13px; text-align: center; padding: 28px 10px; }
+  .hiba { background: var(--err-bg); color: var(--err); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid #c5d3e0; border-top-color: var(--brand); border-radius: 50%; animation: s .8s linear infinite; vertical-align: -2px; }
+  .gomb .spin { border-color: rgba(255,255,255,.4); border-top-color: #fff; }
+  @keyframes s { to { transform: rotate(360deg); } }
+  /* összesített (könyvelői) nézet: a szűrők a rögzített fejlécben (a cím és a választó alatt), a táblázat a lappal görög,
+     az oszlopfejléc a szűrők alatt rögzítve marad; táblázatszerű, vékony cellák */
+  .fejszuro { flex-basis: 100%; border-top: 1px solid var(--line); padding-top: 10px; }
+  .szurok { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 8px 12px; }
+  .szurok select, .szurok input { width: 100%; min-width: 0; }
+  .talalat { margin-top: 6px; color: var(--muted); font-size: 12.5px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .kartya.tablakartya { overflow: visible; }
+  .tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  .tabla th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); background: #f3f6f9; padding: 7px 8px;
+    border-bottom: 1px solid var(--line); border-right: 1px solid #e3e8ee; position: sticky; top: calc(var(--topM, 0px) + var(--fejM, 0px)); z-index: 2; }
+  .tabla td { padding: 4px 8px; border-bottom: 1px solid #e6ebf0; border-right: 1px solid #eef1f4; vertical-align: middle; line-height: 1.35; }
+  .tabla th:last-child, .tabla td:last-child { border-right: 0; text-align: center; }
+  .tablakartya .tabla th:first-child { border-top-left-radius: 11px; } .tablakartya .tabla th:last-child { border-top-right-radius: 11px; }
+  .tabla tbody tr:last-child td { border-bottom: 0; }
+  .tabla tr:hover td { background: #f7fafc; }
+  .tabla .bolt { font-weight: 600; }
+  .tabla .sub { color: var(--muted); font-size: 12px; }
+  .tabla .d { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tabla i.k { color: var(--brand); margin-right: 4px; }
+  .tabla .badge { padding: 1px 9px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+  .tabla .badge i { font-size: 13px; }
+  .tabla td.azon-o { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12.5px; white-space: normal; }
+  .tabla td.azon-o .a1 { white-space: nowrap; }
+  .tabla td.azon-o .sub { font-size: 11.5px; }
+  /* kivont eszköz a Tétel oszlopban: típus, alatta röviden az új helye / az esemény dátuma (a teljes megjegyzés a súgóban) */
+  .tabla .kv { display: block; color: var(--muted); font-size: 12px; }
+  .tabla .zartb { display: block; font-size: 11.5px; }
+  .tabla .gomb.kicsi { padding: 3px 9px; }
+  .tabla .eszk { font-size: 11.5px; padding: 0 7px; margin-left: 6px; }
+  /* az összesítő széles: a bolt neve, a cég és a kategória egy sorban */
+  body.szeles main, body.szeles header.top .in, body.szeles footer { max-width: 1480px; }
+  @media (min-width: 761px) {
+    .tabla .bolt { white-space: nowrap; }
+    /* fejléc középre; a Bolt oszlop balra, a többi középre */
+    .tabla th, .tabla td { text-align: center; }
+    .tabla td:first-child { text-align: left; }
+  }
+  @media (min-width: 1200px) { .tabla td:nth-child(1), .tabla td:nth-child(2) { white-space: nowrap; } }
+  @media (min-width: 1400px) { .tabla td:nth-child(3) { white-space: nowrap; } }
+  @media (min-width: 761px) and (max-width: 1199px) { .tabla td.d { white-space: normal; } }
+  footer { max-width: 1120px; margin: 4px auto 28px; padding: 0 16px; color: var(--muted); font-size: 12.5px; }
+  footer .jel { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  footer .jel .badge { display: inline-flex; align-items: center; gap: 5px; }
+  footer .jel .badge i { font-size: 14px; }
+  footer p { margin: 4px 0; }
+  footer a { color: var(--brand); font-weight: 600; }
+  /* Sites-ba ágyazva, telefonon: egyetlen gomb a teljes képernyős megnyitáshoz */
+  .mobilnyit { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 12px; text-align: center; background: var(--bg); }
+  .mobilnyit .mcim { font-weight: 600; font-size: 16px; color: var(--brand); display: flex; align-items: center; gap: 8px; }
+  .mobilnyit .gomb { font-size: 15px; padding: 10px 16px; text-decoration: none; }
+  .mobilnyit .mmegj { color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 760px) {
+    .szurok { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .szurok > div:first-child { grid-column: 1 / -1; }
+    .szurok select, .szurok input { font-size: 14px; padding: 7px 8px; }
+    .fejszuro { padding-top: 8px; }
+    .talalat { margin-top: 4px; }
+    .talalat span + span { display: none; }
+    .tabla thead { display: none; }
+    .tabla tr { display: block; border-bottom: 1px solid var(--line); padding: 8px 6px; }
+    .tabla td { display: block; border: 0; padding: 2px 10px; }
+    .tabla td.ures { display: none; }
+  }
+  @media (max-width: 560px) {
+    .sor { grid-template-columns: minmax(0, 1fr) auto; }
+    .sor .gomb, .sor .nincs { grid-column: 1 / -1; width: 100%; }
+    .reg { grid-template-columns: 84px minmax(0, 1fr) auto; padding-left: 16px; }
+    select { min-width: 0; width: 100%; }
+    .fej .valaszt { width: 100%; }
+    .fej { gap: 10px; padding: 10px 12px; }
+    .fej .ikon, .fej .al, .fej label { display: none; }
+    .fej h1 { font-size: 18px; }
+    .fej .vissza { padding: 6px 12px; }
+    .fej .vissza { width: 100%; justify-content: center; }
+    .kiv { grid-template-columns: auto minmax(0, 1fr); padding: 12px; }
+    .kiv .it { grid-row: auto; }
+    .kiv .jobb { grid-column: 1 / -1; justify-content: space-between; }
+    .tetel { padding: 12px; }
+    .tetel .jobb { grid-column: 1 / -1; justify-content: space-between; }
+    .tetel .mezok { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+    .term { padding: 11px 12px; }
+    .term .kodok { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+    .term.ures { grid-template-columns: minmax(0, 1fr); }
+    .term.ures .badge { justify-self: start; }
+    .tkozos { padding: 9px 12px; }
+    .kiv .adat { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .kiv .adat dt { font-size: 11.5px; margin-top: 4px; } .kiv .adat dt:first-child { margin-top: 0; }
+  }
+</style>
+</head>
+<body class="szeles">
+<header class="top"><div class="in"><span class="cim"><i class="ti ti-folders" aria-hidden="true"></i>Bolti dokumentumtár</span><span class="szerzo">by: Jacsó József</span></div></header>
+<!-- már betöltés előtt a megfelelő elrendezés: összesítő = széles, bolt (?bolt=) = keskeny -->
+<main id="foresz" class="">
+  <div class="fej">
+    <i class="ti ti-table ikon" id="fejikon" aria-hidden="true"></i>
+    <div class="nev"><h1 id="cim">Összesített nyilvántartás</h1><p class="cegsor" id="cegsor" hidden></p><p class="al" id="al">Könyvelői nézet · minden bolt tételei és bankterminálja</p></div>
+    <div class="valaszt"><label for="bolt">Nézet / bolt</label><select id="bolt" disabled><option>Betöltés…</option></select></div>
+    <button id="vissza" class="gomb kicsi vissza" type="button" hidden><i class="ti ti-arrow-left" aria-hidden="true"></i>Vissza a teljes nézetre</button>
+    <div id="fejszuro" class="fejszuro" hidden></div>
+  </div>
+  <div id="hiba" class="hiba" hidden></div>
+  <div id="lista"><div class="info"><span class="spin"></span> Betöltés…</div></div>
+</main>
+<footer>
+  <div class="jel"><span class="badge b-ok"><i class="ti ti-circle-check" aria-hidden="true"></i>Érvényes</span><span class="badge b-warn"><i class="ti ti-clock" aria-hidden="true"></i>Hamarosan esedékes</span><span class="badge b-err"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Lejárt</span><span class="badge b-miss"><i class="ti ti-circle-dashed" aria-hidden="true"></i>Hiányzik</span></div>
+  <p><i class="ti ti-lock" aria-hidden="true"></i> Ez az oldal kizárólag betekintésre és letöltésre szolgál; a dokumentumok itt nem módosíthatók és nem törölhetők.</p>
+  <p>Kérdés, hiányzó vagy hibás adat esetén vedd fel a kapcsolatot Jacsó Józseffel: <a href="mailto:jacso.jozsef@lipotipekseg.hu">jacso.jozsef@lipotipekseg.hu</a></p>
+</footer>
+
+<script>
+  const KEZDO = (() => { try { return new URLSearchParams(location.search).get('bolt') || ''; } catch (e) { return ''; } })();
+  // bolt-link (?bolt=…): a keskeny, bolti elrendezés már az első kirajzolásnál (az Apps Script-változatban ezt a sablon tette)
+  if (KEZDO) {
+    document.body.classList.remove('szeles'); document.getElementById('foresz').classList.add('keskeny');
+    document.getElementById('fejikon').className = 'ti ti-building-store ikon';
+    document.getElementById('cim').textContent = KEZDO; document.getElementById('al').textContent = 'Felülvizsgálati dokumentumok';
+  }
+  const OSSZ = '__osszesito__', KIVONT = '__kivont__';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const API = "https://script.google.com/macros/s/AKfycbxPYWjfIl8A0uARtqrcmVwBYvZqep0Y9M0FGkaXpMM8T6Yq4yCpUmrrmCuckYzmy_eH/exec";
+  const hivas = async (fn, ...a) => {
+    let v;
+    try {
+      const r = await fetch(API + '?api=' + encodeURIComponent(fn) + '&a=' + encodeURIComponent(JSON.stringify(a)), { redirect: 'follow', cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      v = await r.json();
+    } catch (e) { throw new Error('A kapcsolat a táblázattal nem sikerült (' + (e && e.message ? e.message : e) + ')'); }
+    if (!v || !v.ok) throw new Error(v && v.hiba ? v.hiba : 'Ismeretlen hiba');
+    return v.adat;
+  };
+  const pont = (d) => d && /^\d{4}\.\d{2}\.\d{2}$/.test(d) ? d + '.' : (d || '');
+  const ig = (d) => d ? d + '-ig' : '';
+  let kert = 0, ossz = null;
+
+  // kategóriánkénti ikonszín: [ikon, háttér]
+  const IKSZIN = {
+    'tools-kitchen-2': ['#2f7d32', '#e6f4e7'], 'droplet': ['#0e7490', '#dff3f7'], 'helmet': ['#b45309', '#fdf0dc'], 'bolt': ['#a16207', '#fcf4d6'],
+    'scale-outline': ['#6d28d9', '#efe9fb'], 'cash-register': ['#0f766e', '#dcf2ee'], 'file-certificate': ['#4338ca', '#e8e9fb'], 'bug': ['#9a3412', '#fbe9df'],
+    'fire-extinguisher': ['#b91c1c', '#fce8e8'], 'credit-card-pay': ['#1d4ed8', '#e3ecfc'], 'printer': ['#475569', '#eaeef3'], 'archive': ['#5f5e5a', '#eeede8'],
+  };
+  const ikSzin = (ik) => IKSZIN[ik] || ['#1f4e79', '#e8f0f8'];
+  function ikonCsempe(ik, kis) {
+    const c = ikSzin(ik);
+    return '<span class="it' + (kis ? ' kis' : '') + '" style="--c:' + c[0] + ';--cb:' + c[1] + '"><i class="ti ti-' + esc(ik) + '" aria-hidden="true"></i></span>';
+  }
+
+  // kivont eszköz állapota: [jelvény színe, ikon, sorrend]
+  const KIV_ALL = { 'Másik boltba átadva': ['info', 'arrows-exchange', 0], 'Eladva': ['sold', 'receipt-2', 1], 'Leselejtezve': ['gray', 'trash', 2] };
+  /** A Kivont eszközök megjegyzése mezőkre bontva: dátum, utolsó felülvizsgálat, új helye (bolt, cég), megjegyzés. */
+  function kivontAdat(x) {
+    const o = { datum: '', utolso: '', hely: null, megj: [] };
+    String(x.megj || '').split(/\s*;\s*|\s+·\s+/).map((s) => s.trim()).filter(Boolean).forEach((s) => {
+      let m;
+      if ((m = s.match(/^utolsó felülvizsgálat:\s*(.+)$/i))) o.utolso = m[1];
+      else if ((m = s.match(/^(?:azóta|átkerült):\s*(.+)$/i))) {
+        let t = m[1], all = '';
+        const k = t.indexOf(' – ');
+        if (k >= 0) { o.megj.push(t.slice(k + 3)); t = t.slice(0, k); }
+        const a = t.match(/^(.*\))\s*,\s*(.+)$/);
+        if (a) { t = a[1]; all = a[2]; }
+        const c = t.match(/^(.*?)\s*\(([^()]+)\)$/);
+        o.hely = { bolt: c ? c[1] : t, ceg: c ? c[2] : '', all: all };
+      } else if ((m = s.match(/^(\d{4}\.\d{2}\.\d{2}\.?)\s*:\s*(.+)$/))) { o.datum = m[1]; o.megj.push(m[2]); }
+      else if (/^megszűnt \/ átadott bolt$/i.test(s)) o.megj.push('a bolt megszűnt / átadva');
+      else o.megj.push(s);
+    });
+    return o;
+  }
+  function kivontSor(x) {
+    const st = KIV_ALL[x.allapot] || ['gray', 'archive', 3], d = kivontAdat(x);
+    const kat = String(x.eszkoz || '').replace(/\s+felülvizsgálat$/i, '');
+    const azon = x.azon ? (/^(TID|S\/N)/.test(x.azon) ? esc(x.azon) : '<span class="azon">' + esc(x.azon) + '</span>') : '';
+    const sorok = [];
+    if (d.datum) sorok.push([x.allapot === 'Leselejtezve' ? 'Selejtezve' : x.allapot === 'Eladva' ? 'Eladva' : 'Átadva', esc(pont(d.datum))]);
+    if (d.utolso) sorok.push(['Utolsó felülvizsgálat', esc(pont(d.utolso))]);
+    if (d.hely) {
+      const ismert = [...$('bolt').options].some((o) => o.value === d.hely.bolt);
+      sorok.push(['Új helye', (ismert ? '<a href="#" data-bolt="' + esc(d.hely.bolt) + '">' + esc(d.hely.bolt) + '</a>' : esc(d.hely.bolt)) +
+        (d.hely.ceg ? '<span class="ceg">' + esc(d.hely.ceg) + '</span>' : '') + (d.hely.all ? ' · ' + esc(d.hely.all) : '')]);
+    }
+    if (d.megj.length) sorok.push(['Megjegyzés', esc(d.megj.join(' · '))]);
+    return '<div class="kiv">' + ikonCsempe(x.ikon) +
+      '<div class="fo"><div class="c">' + esc(x.tipus || kat) + '</div><div class="a">' + esc(kat) + (azon ? ' · ' + azon : '') + '</div></div>' +
+      '<div class="jobb"><span class="badge b-' + st[0] + '"><i class="ti ti-' + st[1] + '" aria-hidden="true"></i>' + esc(x.allapot) + '</span>' +
+      (x.dok ? '<span class="gombok">' + nezGomb(x.dok.id) + '<button class="gomb kicsi" data-id="' + esc(x.dok.id) + '" title="Utolsó dokumentum: ' + esc(pont(x.dok.datum)) + '"><i class="ti ti-download" aria-hidden="true"></i>Utolsó dokumentum</button></span>' : '') + '</div>' +
+      (sorok.length ? '<dl class="adat">' + sorok.map((r) => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('') + '</dl>' : '') +
+      '</div>';
+  }
+
+  /**
+   * Bankterminálok kártyája: a bolt közös adatai (MID, Manager kód – boltonként egyformák) egyszer, felül; terminálonként a típus,
+   * az állapot és a TID / S/N felirattal. A még fel nem vett (helyőrző) és a külső kezelésű terminál szöveges magyarázatot kap.
+   */
+  const TERM_IKON = { 'Aktív': 'circle-check', 'Tartalék': 'clock-pause', 'Beüzemelésre vár': 'hourglass-empty', 'Külső kezelésű': 'building' };
+  function terminalKartya(lista, bolt, ceg) {
+    const kozos = (k) => { const v = lista.map((t) => t[k]).filter(Boolean); return v.length && v.every((x) => x === v[0]) ? v[0] : ''; };
+    const mid = kozos('mid'), mgr = kozos('manager'), szolg = kozos('szolg');
+    const kod = (cimke, ertek) => '<div><dt>' + cimke + '</dt><dd>' + esc(ertek) + '</dd></div>';
+    // terminálonként a többi kártya tételeinek mintájára (2026.11.16.): név, jobbra az állapot, alatta szürke dobozban a kódok
+    const mezo = (cimke, ertek) => '<div><dt>' + cimke + '</dt><dd class="kod">' + esc(ertek) + '</dd></div>';
+    const sorok = lista.map((t) => {
+      const jel = '<span class="badge b-' + esc(t.szin || 'gray') + '">' + (TERM_IKON[t.allapot] ? '<i class="ti ti-' + TERM_IKON[t.allapot] + '" aria-hidden="true"></i>' : '') + esc(t.allapot || '–') + '</span>';
+      if (t.helyorzo) {
+        const kulso = t.allapot === 'Külső kezelésű';
+        return '<div class="tetel"><div class="fo"><div class="c">' + (kulso ? 'Külső szolgáltató kezeli' : 'Még nincs rögzített terminál') + '</div>' +
+          '<div class="a">' + (kulso ? 'A bolt bankterminálját nem mi tartjuk nyilván.' : 'A terminál adatai a beüzemelés után jelennek meg itt.') + '</div></div>' +
+          '<div class="jobb">' + jel + '</div></div>';
+      }
+      const kodok = [t.tid ? mezo('TID', t.tid) : '', t.sn ? mezo('S/N', t.sn) : '', t.mid && !mid ? mezo('MID', t.mid) : '', t.manager && !mgr ? mezo('Manager kód', t.manager) : ''].join('');
+      // szolgáltató: ha a bolt terminálja nem mind ugyanattól van, terminálonként a típus alatt
+      const al = [t.szolg && !szolg ? t.szolg : '', t.megj].filter(Boolean).join(' · ');
+      return '<div class="tetel"><div class="fo"><div class="c">' + esc(t.tipus || 'Bankterminál') + '</div>' + (al ? '<div class="a">' + esc(al) + '</div>' : '') + '</div>' +
+        '<div class="jobb">' + jel + '</div>' + (kodok ? '<dl class="mezok">' + kodok + '</dl>' : '') + elozmenyHtml(t.elozmeny, { bolt: bolt, ceg: ceg }) + '</div>';
+    }).join('');
+    const fej = mid || mgr || szolg ? '<dl class="tkozos">' + (szolg ? '<div><dt>Szolgáltató</dt><dd class="nev">' + esc(szolg) + '</dd></div>' : '') +
+      (mid ? kod('MID (kereskedő)', mid) : '') + (mgr ? kod('Manager kód', mgr) : '') + '</dl>' : '';
+    const db = lista.filter((t) => !t.helyorzo).length;
+    return '<section class="kartya"><div class="kfej">' + ikonCsempe('credit-card-pay', true) + '<h2>Bankterminálok</h2>' + (db ? '<span class="db">' + db + '</span>' : '') + '</div>' +
+      fej + sorok + '</section>';
+  }
+
+  function hiba(msg) { $('hiba').hidden = !msg; $('hiba').textContent = msg || ''; }
+
+  /** Eszköz állapota (Aktív, Tartalék, Beüzemelésre vár…) kis jelzőként a tétel neve mellett. */
+  function eszkJel(a) {
+    if (!a) return '';
+    const szin = a === 'Aktív' ? 'ok' : /Tartalék|Beüzemelésre vár/.test(a) ? 'info' : 'gray';
+    return '<span class="eszk e-' + szin + '" title="Eszköz állapota">' + esc(a) + '</span>';
+  }
+
+  // állapotjelvény ikonja színenként
+  const SZIN_IKON = { ok: 'circle-check', warn: 'clock', err: 'alert-triangle', miss: 'circle-dashed', info: 'info-circle', gray: 'minus' };
+  /**
+   * Egy kategória-tétel (2026.11.16., a kivont eszközök mintájára): név; alatta az eszköz állapota, az azonosító és – cégszintű
+   * dokumentumnál – a cég; jobbra az állapotjelvény és a letöltés; alatta adatdoboz felirattal (dátum, érvényesség, hiány).
+   */
+  /**
+   * Egy eszköz előélete lenyitható idővonalként (2026.11.16.): legfelül a mostani helye (és az itt készült dokumentumok dátuma),
+   * alatta a korábbi helyei a legújabbtól: bolt, cég, mi lett vele (átadva / eladva…), mikor, hova került, utolsó felülvizsgálat,
+   * az ott készült dokumentumok (a cég saját dokumentuma letölthető, más cégé csak dátummal).
+   */
+  function elozmenyHtml(e, most) {
+    if (!e || !e.helyek || !e.helyek.length) return '';
+    const boltLink = (b) => [...$('bolt').options].some((o) => o.value === b) ? '<a href="#" data-bolt="' + esc(b) + '">' + esc(b) + '</a>' : esc(b);
+    const cegJel = (c) => c ? '<span class="ceg">' + esc(c) + '</span>' : '';
+    const dokSor = (d) => '<div class="hd"><i class="ti ti-file-text" aria-hidden="true"></i><span class="d">' + esc(pont(d.datum) || '–') + '</span><span class="n">' + esc(d.dok) + '</span>' +
+      (d.id ? '<span class="gombok">' + nezGomb(d.id) + '<button class="gomb kicsi" data-id="' + esc(d.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>'
+        : '<span class="zar" title="Másik cég dokumentuma – innen nem tölthető le"><i class="ti ti-lock" aria-hidden="true"></i></span>') + '</div>';
+    const jelen = '<li class="most"><div class="hb">Jelenleg: ' + esc(most.bolt) + cegJel(most.ceg) + '</div>' +
+      (most.uzembe ? '<div class="hr">Üzembe helyezve itt: <b>' + esc(pont(most.uzembe)) + '</b></div>' : '') +
+      (e.itt || []).map(dokSor).join('') + '</li>';
+    const korabbi = e.helyek.map((h) => {
+      const d = kivontAdat(h), kv = KIV_ALL[h.allapot];
+      const jel = kv ? '<span class="badge b-' + kv[0] + '"><i class="ti ti-' + kv[1] + '" aria-hidden="true"></i>' + esc(h.allapot) + '</span>' : eszkJel(h.allapot);
+      const sorok = [];
+      if (d.datum) sorok.push((h.allapot === 'Leselejtezve' ? 'Selejtezve' : h.allapot === 'Eladva' ? 'Eladva' : 'Átadva') + ': <b>' + esc(pont(d.datum)) + '</b>');
+      if (d.hely) sorok.push((d.hely.bolt === most.bolt ? 'Innen került ide' : 'Innen került: ' + boltLink(d.hely.bolt) + cegJel(d.hely.ceg)) + (d.hely.all ? ' · ' + esc(d.hely.all) : ''));
+      const utolso = d.utolso || h.utolso;
+      if (utolso) sorok.push('Utolsó felülvizsgálat itt: <b>' + esc(pont(utolso)) + '</b>');
+      if (d.megj.length) sorok.push(esc(d.megj.join(' · ')));
+      return '<li><div class="hb">' + boltLink(h.bolt) + cegJel(h.ceg) + jel + '</div>' + sorok.map((x) => '<div class="hr">' + x + '</div>').join('') + (h.doks || []).map(dokSor).join('') + '</li>';
+    }).join('');
+    // összecsukva az útja egy sorban, a legrégebbitől: „Bp, Nyugati tér → Kőszeg, Tesco → ide” (a boltnevekben vessző van, ezért nyíl)
+    const ut = e.helyek.map((h) => h.bolt).reverse(), hol = (ut.length > 3 ? ['…'].concat(ut.slice(-3)) : ut).concat('ide').join(' → ');
+    return '<details class="elozmeny"><summary><i class="ti ti-chevron-right" aria-hidden="true"></i>Előélet <span class="hol">· ' + esc(hol) + '</span></summary>' +
+      '<ol class="idovonal">' + jelen + korabbi + '</ol></details>';
+  }
+
+  function tetelSor(s, k, ceg, bolt) {
+    const al = [eszkJel(s.eszk), s.azon ? (k.eszkoz ? '<span class="azon" title="Azonosító">' + esc(s.azon) + '</span>' : esc(s.azon)) : '',
+      s.dok && s.dok.ceg ? '<span class="ceg" title="A cég dokumentuma – a cég minden boltjára vonatkozik">' + esc(ceg) + '</span>' : ''].filter(Boolean);
+    const mezok = [], aktiv = s.szin !== 'gray' && s.szin !== 'info';
+    if (s.dok) {
+      const cimke = k.eszkoz ? (/Mérleg/i.test(k.kat) ? 'Hitelesítve' : 'Utolsó felülvizsgálat') : s.lejaratNelkul && /szerződés/i.test(s.cim) ? 'Aláírva' : 'Elkészült';
+      mezok.push([cimke, esc(pont(s.dok.datum))]);
+      // a bizonyítványon kicsit más az azonosító (pl. elírt számjegy) – látszódjon, hogy ellenőrizni kell
+      if (s.dok.eltero && s.dok.azon) mezok.push(['Bizonyítványon', '<span class="azon">' + esc(s.dok.azon) + '</span> <span class="sub">(eltérő azonosító)</span>']);
+      // a gép az előző boltjában (a cégen belül) kapta a legfrissebb dokumentumát
+      if (s.dok.mashol) mezok.push(['Készült', esc(s.dok.mashol) + ' <span class="sub">(előző helye)</span>']);
+    } else if (s.uzembe) {
+      mezok.push(['Üzembe helyezve', esc(pont(s.utolso))], ['Jegyzőkönyv', 'az első éves felülvizsgálattól']);
+    } else if (s.teendo) mezok.push(['Teendő', esc(s.teendo), 'hiany']);
+    else if (aktiv) mezok.push(['Dokumentum', '<span class="hiany-sz">még nincs feltöltve</span>', 'hiany']);
+    if (s.lejaratNelkul) mezok.push(['Érvényes', 'lejárat nélkül']);
+    else if (s.kov && aktiv) mezok.push([s.szin === 'err' ? 'Lejárt ekkor' : 'Érvényes eddig', esc(pont(s.kov))]);
+    const jel = s.allapot ? '<span class="badge b-' + esc(s.szin) + '">' + (SZIN_IKON[s.szin] ? '<i class="ti ti-' + SZIN_IKON[s.szin] + '" aria-hidden="true"></i>' : '') + esc(s.allapot) + '</span>' : '';
+    const gomb = s.dok ? '<span class="gombok">' + nezGomb(s.dok.id, true) + '<button class="gomb" data-id="' + esc(s.dok.id) + '"><i class="ti ti-download" aria-hidden="true"></i>Letöltés</button></span>' : '';
+    // még fel nem vett gép (helyőrző: nincs azonosító, nincs dokumentum) – mint a Banktermináloknál: „Még nincs rögzített mérleg”
+    const helyorzo = k.eszkoz && !s.azon && !s.dok && s.cim === k.kat;
+    const cim = helyorzo ? 'Még nincs rögzített ' + k.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
+    return '<div class="tetel"><div class="fo"><div class="c">' + esc(cim) + '</div>' + (al.length ? '<div class="a">' + al.join('') + '</div>' : '') + '</div>' +
+      '<div class="jobb">' + jel + gomb + '</div>' +
+      (mezok.length ? '<dl class="mezok">' + mezok.map((m) => '<div><dt>' + m[0] + '</dt><dd' + (m[2] ? ' class="' + m[2] + '"' : '') + '>' + m[1] + '</dd></div>').join('') + '</dl>' : '') +
+      elozmenyHtml(s.elozmeny, { bolt: bolt, ceg: ceg, uzembe: s.uzembe ? s.utolso : '' }) + '</div>';
+  }
+
+  async function indul() {
+    try {
+      const r = await hivas('boltLista');
+      const sel = $('bolt');
+      sel.innerHTML = '<option value="' + OSSZ + '">Összesített nyilvántartás (könyvelői nézet)</option><optgroup label="Boltok">' +
+        r.boltok.map((b) => '<option>' + esc(b) + '</option>').join('') + '</optgroup>';
+      sel.disabled = false;
+      sel.onchange = () => valt(sel.value);
+      $('vissza').onclick = () => { sel.value = OSSZ; valt(OSSZ); window.scrollTo(0, 0); };
+      const kezdo = KEZDO && r.boltok.indexOf(KEZDO) >= 0 ? KEZDO : OSSZ;
+      sel.value = kezdo;
+      valt(kezdo);
+    } catch (e) { hiba('Az oldal most nem tölthető be. Próbáld újra pár perc múlva. (' + e.message + ')'); $('lista').innerHTML = ''; }
+  }
+
+  function valt(v) { hiba(''); $('vissza').hidden = v === OSSZ; if (v === OSSZ) osszesitoMutat(); else boltMutat(v); }
+
+  // ---------------- összesített (könyvelői) nézet
+  async function osszesitoMutat() {
+    const sajat = ++kert;
+    $('foresz').classList.remove('keskeny');
+    document.body.classList.add('szeles');
+    $('fejikon').className = 'ti ti-table ikon';
+    $('cim').textContent = 'Összesített nyilvántartás';
+    $('cegsor').hidden = true;
+    $('al').textContent = 'Könyvelői nézet · minden bolt tételei és bankterminálja';
+    $('lista').innerHTML = '<div class="info"><span class="spin"></span> Az összesítő betöltése…</div>';
+    try {
+      if (!ossz) ossz = await hivas('osszesito');
+      if (sajat !== kert) return;
+      $('al').textContent = 'Könyvelői nézet · minden bolt tételei és bankterminálja · frissítve: ' + ossz.frissitve;
+      // szűrők a rögzített fejlécben; a táblázat a lappal görög
+      $('fejszuro').innerHTML = '<div class="szurok">' +
+          '<div><label for="q">Keresés</label><input type="search" id="q" placeholder="pl. A24115593, Győr, mérleg, Roxin, TID…" autocomplete="off"></div>' +
+          '<div><label for="fceg">Cég</label><select id="fceg"><option value="">Minden cég</option>' + ossz.cegek.map((c) => '<option>' + esc(c) + '</option>').join('') + '</select></div>' +
+          '<div><label for="fbolt">Bolt</label><select id="fbolt"><option value="">Minden bolt</option>' + ossz.boltok.map((b) => '<option>' + esc(b.nev) + '</option>').join('') + '</select></div>' +
+          '<div><label for="fkat">Kategória</label><select id="fkat"><option value="">Minden kategória</option>' +
+            (ossz.kategoriak || ossz.sorok.map((s) => s.kat).filter((k, i, l) => l.indexOf(k) === i)).map((k) => '<option>' + esc(k) + '</option>').join('') +
+            (ossz.sorok.some((s) => s.kivont) ? '<option value="' + KIVONT + '">Eladott, selejtezett, átadott eszközök</option>' : '') + '</select></div>' +
+        '</div>' +
+        '<div class="talalat"><span id="db"></span><span>Kattints a bolt nevére a bolt részletes oldalához.</span></div>';
+      $('fejszuro').hidden = false;
+      fejMeret();
+      $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
+        '<th>Dátum</th><th>Érvényes</th><th>Állapot</th><th>Letöltés</th></tr></thead><tbody id="tsor"></tbody></table></section>';
+      $('q').oninput = szur; $('fceg').onchange = () => { boltSzuroCeghez(); szur(); }; $('fbolt').onchange = szur; $('fkat').onchange = szur;
+      szur();
+    } catch (e) { if (sajat === kert) { $('lista').innerHTML = ''; hiba('Az összesítő most nem tölthető be. Próbáld újra. (' + e.message + ')'); } }
+  }
+  function boltSzuroCeghez() {
+    const c = $('fceg').value, v = $('fbolt').value;
+    const l = ossz.boltok.filter((b) => !c || b.ceg === c);
+    $('fbolt').innerHTML = '<option value="">Minden bolt</option>' + l.map((b) => '<option>' + esc(b.nev) + '</option>').join('');
+    if (l.some((b) => b.nev === v)) $('fbolt').value = v;
+  }
+  const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  /** Az összesítő állapotjelvénye ikonnal (mint a bolt oldalán); a kivont eszköz a saját színével (átadva, eladva, leselejtezve). */
+  function allapotJel(s) {
+    if (!s.allapot) return '';
+    const kv = s.kivont ? KIV_ALL[s.allapot] : null, szin = kv ? kv[0] : (s.szin || 'gray');
+    const ik = kv ? kv[1] : s.terminal ? TERM_IKON[s.allapot] : SZIN_IKON[szin];
+    return '<span class="badge b-' + esc(szin) + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + esc(s.allapot) + '</span>';
+  }
+  function szur() {
+    const szavak = norm($('q').value).split(/\s+/).filter(Boolean), c = $('fceg').value, b = $('fbolt').value, k = $('fkat').value;
+    const l = ossz.sorok.filter((s) => {
+      if (c && s.ceg !== c) return false;
+      if (b && s.bolt !== b) return false;
+      if (k === KIVONT ? !s.kivont : k && s.kat !== k) return false;
+      if (!szavak.length) return true;
+      const t = norm([s.bolt, s.ceg, s.kat, s.cim, s.azon, s.azon2, s.eszk, s.reszlet, s.datum, s.kov, s.allapot].join(' '));
+      return szavak.every((w) => t.indexOf(w) >= 0);
+    });
+    $('db').textContent = l.length + ' tétel' + (l.length !== ossz.sorok.length ? ' (összesen ' + ossz.sorok.length + ')' : '');
+    $('tsor').innerHTML = l.length ? l.map((s) => {
+      // kivont eszköz: a megjegyzésből röviden az új helye vagy az esemény dátuma; az utolsó felülvizsgálat a Dátum oszlopba kerül
+      const kv = s.kivont ? kivontAdat({ megj: s.reszlet }) : null;
+      const kvSor = kv ? [kv.hely ? '→ ' + kv.hely.bolt : '', kv.datum ? (s.allapot === 'Leselejtezve' ? 'selejtezve ' : s.allapot === 'Eladva' ? 'eladva ' : 'átadva ') + pont(kv.datum) : ''].filter(Boolean).join(' · ') : '';
+      const datum = s.datum ? (s.uzembe ? 'üzembe h.: ' : '') + pont(s.datum) : kv && kv.utolso ? pont(kv.utolso) : '';
+      // még fel nem vett gép (nincs azonosító, a tétel neve a kategória): mint a bolt oldalán, „Még nincs rögzített …”
+      const cim = !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
+      return '<tr>' +
+      '<td>' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
+        : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') + '</td>' +
+      '<td>' + esc(s.ceg) + '</td>' +
+      '<td><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
+      // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
+      '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
+        (kv ? (kvSor ? '<span class="kv">' + esc(kvSor) + '</span>' : '') : s.reszlet ? ' <span class="sub">· ' + esc(s.reszlet) + '</span>' : '') + '</td>' +
+      // azonosító fix szélességű betűvel; bankterminálnál a TID alatt kisebben az S/N és a MID
+      '<td class="d azon-o' + (s.azon ? '' : ' ures') + '"><span class="a1">' + esc(s.azon || '') + '</span>' + 
+        // S/N és MID: csak a „ · ” helyén törhet (a „MID:” és a szám együtt marad)
+        (s.azon2 ? '<div class="sub">' + s.azon2.split(' · ').map((x) => '<span class="a1">' + esc(x) + '</span>').join(' · ') + '</div>' : '') + '</td>' +
+      '<td class="d' + (datum ? '' : ' ures') + '"' + (kv && kv.utolso && !s.datum ? ' title="Utolsó felülvizsgálat"' : '') + '>' + esc(datum || (s.terminal || s.kivont ? '' : '–')) + '</td>' +
+      '<td class="d' + (s.terminal || s.kivont ? ' ures' : '') + '">' + esc(s.terminal || s.kivont ? '' : s.lejaratNelkul ? 'lejárat nélkül' : (s.kov ? ig(s.kov) : '–')) + '</td>' +
+      '<td>' + allapotJel(s) + '</td>' +
+      '<td>' + (s.id ? '<span class="gombok">' + nezGomb(s.id) + '<button class="gomb kicsi" data-id="' + esc(s.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span>' : '') + '</td>' +
+      '</tr>'; }).join('') : '<tr><td colspan="9" class="info">Nincs a keresésnek megfelelő tétel.</td></tr>';
+    gombokKot($('tsor'));
+    $('tsor').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
+  }
+
+  // ---------------- egy bolt nézete
+  async function boltMutat(nev) {
+    const sajat = ++kert;
+    $('foresz').classList.add('keskeny');
+    document.body.classList.remove('szeles');
+    $('fejszuro').hidden = true; $('fejszuro').innerHTML = ''; fejMeret();
+    $('fejikon').className = 'ti ti-building-store ikon';
+    $('cim').textContent = nev;
+    // az üzemeltető cég a bolt neve alatt (ha az összesítő már betöltött, azonnal)
+    const ismert = ossz && ossz.boltok.filter((b) => b.nev === nev)[0];
+    $('cegsor').textContent = ismert ? ismert.ceg : '';
+    $('cegsor').hidden = !ismert;
+    $('al').textContent = 'Felülvizsgálati dokumentumok';
+    $('lista').innerHTML = '<div class="info"><span class="spin"></span> A dokumentumok betöltése…</div>';
+    try {
+      const r = await hivas('boltAdat', nev);
+      if (sajat !== kert) return;
+      $('cegsor').textContent = r.ceg || '';
+      $('cegsor').hidden = !r.ceg;
+      $('al').textContent = 'Felülvizsgálati dokumentumok · frissítve: ' + r.frissitve;
+      $('cim').innerHTML = esc(r.bolt) + (r.allapot && r.allapot !== 'Aktív' ? '<span class="badge b-info">' + esc(r.allapot) + '</span>' : '');
+      rajzol(r);
+    } catch (e) { if (sajat === kert) { $('lista').innerHTML = ''; hiba('A bolt adatai most nem tölthetők be. Próbáld újra. (' + e.message + ')'); } }
+  }
+
+  function rajzol(r) {
+    const kartyak = r.kartyak.map((k) => {
+      const sorok = k.sorok.map((s) => tetelSor(s, k, r.ceg, r.bolt)).join('');
+      const kor = k.korabbiak.length ? '<details><summary><i class="ti ti-chevron-right" aria-hidden="true"></i>Korábbiak (' + k.korabbiak.length + ')</summary>' +
+        k.korabbiak.map((d) => '<div class="reg"><span class="d">' + esc(pont(d.datum) || '–') + '</span><span>' + esc(d.dok) + (d.azon ? ' · ' + esc(d.azon) : '') + (d.ceg ? '<span class="ceg">' + esc(r.ceg) + '</span>' : '') + '</span>' +
+          '<span class="gombok">' + nezGomb(d.id) + '<button class="gomb kicsi" data-id="' + esc(d.id) + '" aria-label="Letöltés" title="Letöltés"><i class="ti ti-download" aria-hidden="true"></i></button></span></div>').join('') + '</details>' : '';
+      // eszközkategóriánál a fejlécben a darabszám (mint a Bankterminálok és a kivont eszközök kártyáján)
+      return '<section class="kartya"><div class="kfej">' + ikonCsempe(k.ikon, true) + '<h2>' + esc(k.kat) + '</h2>' + (k.eszkoz && k.sorok.length ? '<span class="db">' + k.sorok.length + '</span>' : '') + '</div>' + sorok + kor + '</section>';
+    });
+    // bankterminálok (a bolt eszközei, dokumentum nélkül)
+    if (r.terminalok && r.terminalok.length) kartyak.push(terminalKartya(r.terminalok, r.bolt, r.ceg));
+    // eladott, leselejtezett eszközök (a korábbi gépek, dokumentumukkal, ha van)
+    if (r.kivont && r.kivont.length) {
+      const rend = (x) => (KIV_ALL[x.allapot] || [0, 0, 3])[2];
+      kartyak.push('<section class="kartya"><div class="kfej">' + ikonCsempe('archive', true) + '<h2>Eladott, selejtezett, átadott eszközök</h2><span class="db">' + r.kivont.length + '</span></div>' +
+        r.kivont.slice().sort((a, b) => rend(a) - rend(b)).map(kivontSor).join('') + '</section>');
+    }
+    $('lista').innerHTML = kartyak.length ? kartyak.join('') : '<div class="info">Ehhez a bolthoz még nincs feltöltött dokumentum.</div>';
+    gombokKot($('lista'));
+    // a kivont eszköz új helye: kattintásra a bolt oldala
+    $('lista').querySelectorAll('a[data-bolt]').forEach((a) => { a.onclick = (e) => { e.preventDefault(); $('bolt').value = a.dataset.bolt; valt(a.dataset.bolt); window.scrollTo(0, 0); }; });
+  }
+
+  /** A dokumentum a szkripten keresztül (a Drive-mappa privát): fájlnév + helyi (blob) hivatkozás. */
+  async function dokBetolt(id, ablak) {
+    const r = await hivas('letoltes', id);
+    const s = atob(r.b64), a = new Uint8Array(s.length);
+    for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+    // a hivatkozást abban a lapban kell létrehozni, ahol megjelenik: a Chrome a blob-hivatkozást a létrehozó laphoz (és a
+    // beágyazó oldalhoz) köti – a script.google.com keretéből készült hivatkozás az új lapon „nem található” (2026.11.16.)
+    const w = ablak || window;
+    return { nev: r.nev, url: w.URL.createObjectURL(new w.Blob([a], { type: r.mime })) };
+  }
+
+  async function letolt(gomb) {
+    if (gomb.getAttribute('aria-busy') === 'true') return;
+    const eredeti = gomb.innerHTML;
+    gomb.setAttribute('aria-busy', 'true'); gomb.innerHTML = '<span class="spin"></span>' + (gomb.classList.contains('kicsi') ? '' : 'Letöltés…');
+    try {
+      const d = await dokBetolt(gomb.dataset.id);
+      const l = document.createElement('a'); l.href = d.url; l.download = d.nev; document.body.appendChild(l); l.click(); l.remove();
+      setTimeout(() => URL.revokeObjectURL(d.url), 60000);
+      hiba('');
+    } catch (e) { hiba('A letöltés nem sikerült. Próbáld újra. (' + e.message + ')'); }
+    gomb.removeAttribute('aria-busy'); gomb.innerHTML = eredeti;
+  }
+
+  /**
+   * Megtekintés új lapon, letöltés nélkül (2026.11.16.): az új lap rögtön a kattintáskor nyílik (különben a böngésző
+   * felugró ablakként letiltaná), „betöltés…” felirattal; amint a fájl megjött, a lap a böngésző saját PDF- / képnézőjében mutatja.
+   */
+  async function megnez(gomb) {
+    if (gomb.getAttribute('aria-busy') === 'true') return;
+    const eredeti = gomb.innerHTML;
+    let w = null;
+    try { w = window.open('', '_blank'); } catch (e) { w = null; }
+    if (w) {
+      try {
+        w.document.write('<!doctype html><meta charset="utf-8"><title>Dokumentum betöltése…</title>' +
+          '<body style="margin:0;font:15px Segoe UI,Roboto,Arial,sans-serif;color:#1d2733;background:#f4f6f9;display:grid;place-items:center;height:100vh">' +
+          '<p>A dokumentum betöltése…</p></body>');
+        w.document.close();
+      } catch (e) { /* a lap ettől még használható */ }
+    }
+    gomb.setAttribute('aria-busy', 'true'); gomb.innerHTML = '<span class="spin"></span>';
+    try {
+      if (!w) throw new Error('a böngésző letiltotta az új lapot – engedélyezd a felugró ablakokat ennél az oldalnál');
+      const d = await dokBetolt(gomb.dataset.nez, w.closed ? null : w);
+      // asztali gépen a lap címe a fájl neve (a dokumentum teljes méretű keretben, a böngésző PDF-nézőjével); telefonon a fájl
+      // közvetlenül nyílik (ott a keretbe tett PDF-ből csak az első oldal látszana)
+      if (!w.closed && window.innerWidth >= 768) {
+        const doc = w.document, f = doc.createElement('iframe');
+        doc.title = d.nev;
+        doc.documentElement.style.cssText = 'height:100%';
+        doc.body.style.cssText = 'margin:0;height:100%;background:#525659';
+        f.title = d.nev; f.src = d.url; f.style.cssText = 'border:0;width:100%;height:100%;display:block';
+        doc.body.replaceChildren(f);
+      } else if (!w.closed) w.location.replace(d.url);
+      hiba('');
+    } catch (e) {
+      if (w && !w.closed) w.close();
+      hiba('A dokumentum most nem nyitható meg. Próbáld újra, vagy töltsd le. (' + e.message + ')');
+    }
+    gomb.removeAttribute('aria-busy'); gomb.innerHTML = eredeti;
+  }
+  /** Szem gomb a letöltés mellé (nagy: a tétel saját sorában, a Letöltés gomb magasságában). */
+  function nezGomb(id, nagy) {
+    return '<button class="gomb ' + (nagy ? '' : 'kicsi ') + 'nez" data-nez="' + esc(id) + '" aria-label="Megtekintés új lapon" title="Megtekintés új lapon (letöltés nélkül)">' +
+      '<i class="ti ti-eye" aria-hidden="true"></i></button>';
+  }
+  /** A gombok eseményei a frissen kirajzolt részben. */
+  function gombokKot(hol) {
+    hol.querySelectorAll('button[data-id]').forEach((b) => { b.onclick = () => letolt(b); });
+    hol.querySelectorAll('button[data-nez]').forEach((b) => { b.onclick = () => megnez(b); });
+  }
+
+  // Google Sites oldalba ágyazva (a script.google.com keret maga is be van ágyazva) a Sites telefonon a keretet arányosan
+  // kicsire veszi – ott egy gomb nyitja meg a teljes felületet új lapon (közvetlenül megnyitva ez nem jelenik meg)
+  const ALKALMAZAS = location.origin + location.pathname;
+  const sitesban = (() => { try { return window.parent !== window.top; } catch (e) { return false; } })();
+  const mobilSites = sitesban && window.innerWidth < 600 && !!ALKALMAZAS;
+  if (mobilSites) {
+    document.body.innerHTML = '<div class="mobilnyit"><div class="mcim"><i class="ti ti-folders" aria-hidden="true"></i> Bolti dokumentumtár</div>' +
+      '<a class="gomb" href="' + esc(ALKALMAZAS) + '" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i>Megnyitás teljes képernyőn</a>' +
+      '<div class="mmegj">Telefonon a dokumentumtár új lapon nyílik meg.</div></div>';
+  }
+
+  // a rögzített fejléc magassága: ez alatt marad rögzítve a táblázat oszlopfejléce
+  function fejMeret() {
+    const f = document.querySelector('.fej'), t = document.querySelector('header.top'), s = document.documentElement.style;
+    if (t) s.setProperty('--topM', t.offsetHeight + 'px');
+    if (f) s.setProperty('--fejM', f.offsetHeight + 'px');
+  }
+  if (!mobilSites) {
+    window.addEventListener('resize', fejMeret);
+    const fejFigyelo = window.ResizeObserver ? new ResizeObserver(fejMeret) : null;
+    if (fejFigyelo) { fejFigyelo.observe(document.querySelector('.fej')); fejFigyelo.observe(document.querySelector('header.top')); }
+    fejMeret();
+    indul();
+  }
+</script>
+</body>
+</html>
