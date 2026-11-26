@@ -8,8 +8,10 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795711245512";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795711897152";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@800&display=swap">
 <style>
@@ -444,6 +446,49 @@
   .reg .azon { margin-left: 2px; }
   .talalat .tipp { display: inline-flex; align-items: center; gap: 6px; color: var(--sugo); }
   .talalat .tipp i { color: var(--barna); font-size: 16px; }
+
+  /* ===== 2026.11.26. (este): markánsabb táblázatfejléc, rés nélküli rögzítés, megszűnt boltok elválasztva ===== */
+  /* fejléc (felhasználó: „a fejléc legyen markánsabb”): magasabb, Montserrat feliratok, mélybarna színátmenet, alul karamellszínű
+     kiemelő vonal, görgetéskor árnyék alatta. Minden szegélye telt színű – sehol nem látszik át a görgetett lista. */
+  :root { --thH: 47px; --thAkcent: #d9a25f; --thHatter: linear-gradient(180deg, #8a4513 0%, #6c3109 100%); --thVonal: #a06a3f; }
+  .tabla th, .tablakartya .tabla th { font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 12.5px; letter-spacing: .9px;
+    line-height: 18px; padding: 13px 10px 13px; white-space: nowrap; text-align: center; color: #fff; background: var(--thHatter);
+    border-top: 0; border-left: 0; border-bottom: 3px solid var(--thAkcent); border-right: 1px solid var(--thVonal); text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
+  .tabla th:last-child { border-right: 0; }
+  /* a két szélső cella: a cella maga átlátszó, a háttér (lap színe, a sarok mögött) és a lekerekített barna réteg a szegélyt is fedi */
+  .tablakartya .tabla th:first-child, .tablakartya .tabla th:last-child { background: transparent; border-bottom-color: transparent; }
+  .tablakartya .tabla th:first-child { border-right-color: var(--thVonal); }
+  .tablakartya .tabla th:first-child::before, .tablakartya .tabla th:last-child::before { inset: 0 0 -3px 0; }
+  .tablakartya .tabla th:first-child::after, .tablakartya .tabla th:last-child::after { inset: 0 0 -3px 0; background: var(--thHatter);
+    border: 0; border-bottom: 3px solid var(--thAkcent); }
+  .tablakartya .tabla th:first-child::after { border-radius: 12px 0 0 0; }
+  .tablakartya .tabla th:last-child::after { border-radius: 0 12px 0 0; }
+  /* görgetés közben: a fejléc fölötti sáv a lap hátterével takarva (a felső panel takarójával átfedésben – nincs tört képpontnyi rés),
+     alatta árnyék, hogy a fejléc elváljon a listától */
+  body.gorget .tabla th { box-shadow: 0 -8px 0 0 var(--bg), 0 7px 9px -6px rgba(74, 40, 16, .45); }
+  .tabla td.c-bolt .ragad, .tabla td.c-ceg .ragad { top: calc(var(--topM, 0px) + var(--fejM, 0px) + var(--thH)); }
+  /* a felső panel lekerekített alsó sarkai mögött se látsszon át a lista: a takaró a panel alá is benyúlik (a panel mögött, z: -1) */
+  .fej::after { top: calc(100% - 18px); height: calc(var(--fejRes, 14px) + 18px); z-index: -1; }
+  /* kéttónusú ikonok: a halvány réteg kicsit erősebb, a méret a régiekével egyezik */
+  .ph-duotone { line-height: 1; vertical-align: -0.125em; }
+  .ph-duotone.ph-duotone::before { opacity: .28; }
+  /* a két réteg mindig pontosan egymáson – a rácsos / flex ikondobozokban (csempék, gombok) is: a felső réteg a halvány réteg
+     helyén, abszolút pozícióval, középre igazítva (a csomag alapból margóval tolja vissza, ami rácsban szétcsúszik) */
+  i.ph-duotone { position: relative; }
+  i.ph-duotone.ph-duotone::after { position: absolute; inset: 0; margin-left: 0; display: grid; place-items: center; }
+
+  /* megszűnt / átadott boltok (felhasználó: „markánsabb szegély, és legyenek minimálisabban halványabbak, de minden funkció működjön”):
+     előttük egy elválasztó sor, a soraik kissé halványabbak; egérrel fölé állva teljes erősségű, a linkek és a gombok működnek */
+  .tabla tr.zartfej td { padding: 12px 14px 10px; background: var(--krem); border-top: 4px solid var(--barna); border-bottom: 2px solid var(--keret);
+    border-left: 2px solid var(--keret); border-right: 2px solid var(--keret); text-align: left; color: var(--barna); }
+  .tabla tr.zartfej:hover td { background: var(--krem); }
+  .tabla tr.zartfej .zcim { font-family: Montserrat, Carlito, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: .5px; text-transform: uppercase; }
+  .tabla tr.zartfej .zcim i { font-size: 18px; vertical-align: -3px; margin-right: 6px; }
+  .tabla tr.zartfej .zal { color: var(--sugo); font-size: 14px; margin-left: 10px; }
+  .tabla tr.zart td { opacity: .74; transition: opacity .15s ease; }
+  .tabla tr.zart:hover td, .tabla tr.zart:focus-within td { opacity: 1; }
+  .tabla tr.zart td.c-bolt, .tabla tr.zart td.c-ceg { background: #f8f3ea; }
+  @media (max-width: 760px) { .tabla tr.zartfej td { display: block; border-radius: 10px; margin: 14px 0 6px; } }
 </style>
 </head>
 <body class="szeles">
@@ -480,6 +525,31 @@
   </section>
 </footer>
 
+<script>
+  // Ikonok (2026.11.26.): a kód a megszokott ikonneveket használja (ti ti-…); megjelenítéskor a kéttónusú (duotone) Phosphor-párjuk
+  // látszik – a később kirajzolt tartalomban is (figyelő). Aminek nincs párja, az a régi ikon marad.
+  (function () {
+    const PH = {
+      'download': 'download-simple', 'table': 'table', 'lock': 'lock-simple', 'info-circle': 'info', 'folders': 'folders', 'chevron-right': 'caret-right',
+      'building-store': 'storefront', 'shield-check': 'shield-check', 'pointer': 'cursor-click', 'map-pin': 'map-pin', 'mail': 'envelope-simple',
+      'filter-off': 'funnel-simple-x', 'file-text': 'file-text', 'eye': 'eye', 'external-link': 'arrow-square-out', 'clock': 'clock',
+      'circle-dashed': 'circle-dashed', 'circle-check': 'check-circle', 'check': 'check', 'arrow-left': 'arrow-left', 'arrow-right': 'arrow-right',
+      'archive': 'archive', 'alert-triangle': 'warning', 'tools-kitchen-2': 'fork-knife', 'droplet': 'drop', 'helmet': 'hard-hat', 'bolt': 'lightning',
+      'scale-outline': 'scales', 'cash-register': 'cash-register', 'file-certificate': 'certificate', 'bug': 'bug', 'fire-extinguisher': 'fire-extinguisher',
+      'credit-card-pay': 'credit-card', 'printer': 'printer', 'arrows-exchange': 'arrows-left-right', 'receipt-2': 'receipt', 'trash': 'trash',
+      'minus': 'minus-circle', 'circle-minus': 'minus-circle', 'clock-pause': 'pause-circle', 'hourglass-empty': 'hourglass-medium', 'building': 'buildings',
+    };
+    const csere = (i) => {
+      const n = [...i.classList].find((c) => c.indexOf('ti-') === 0), p = n && PH[n.slice(3)];
+      if (!p) return;
+      i.classList.remove('ti', n); i.classList.add('ph-duotone', 'ph-' + p);
+    };
+    const bejar = (el) => { if (el.nodeType !== 1) return; if (el.matches('i.ti')) csere(el); el.querySelectorAll('i.ti').forEach(csere); };
+    bejar(document.body);
+    new MutationObserver((l) => l.forEach((m) => { if (m.type === 'attributes') bejar(m.target); else m.addedNodes.forEach(bejar); }))
+      .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  })();
+</script>
 <script>
   const KEZDO = (() => { try { return new URLSearchParams(location.search).get('bolt') || ''; } catch (e) { return ''; } })();
   // bolt-link (?bolt=…): a keskeny, bolti elrendezés már az első kirajzolásnál (az Apps Script-változatban ezt a sablon tette)
@@ -852,11 +922,13 @@
       const kulsoHely = !s.kivont && !s.terminal && !s.azon && kulsoTetel(s);
       const cim = !kulsoHely && !s.kivont && !s.terminal && !s.azon && !s.id && s.eszk && s.cim === s.kat ? 'Még nincs rögzített ' + s.kat.replace(/\s+(hitelesítés|felülvizsgálat)$/i, '').toLowerCase() : s.cim;
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
-      const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a><span class="sub zartb">megszűnt / átadott bolt</span>'
-          : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') +
+      const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>' + // a „megszűnt / átadott bolt” jelzés csak a bolt lapján (2026.11.26.)
           (boltCim(s.bolt) ? '<span class="bcim">' + cimKetSor(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
-      return '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + (poz[i] % 2 ? ' cs' : '') + '">' + fej +
+      // a megszűnt / átadott boltok előtt egyszer elválasztó sor (2026.11.26.); a soraik halványabbak (zart)
+      const zartFej = s.zart && n && !(i && l[i - 1].zart) ? '<tr class="zartfej"><td colspan="9"><span class="zcim"><i class="ti ti-archive" aria-hidden="true"></i>Megszűnt / átadott boltok</span>' +
+        '<span class="zal">archívum – eladott, selejtezett, átadott eszközök és utolsó dokumentumaik</span></td></tr>' : '';
+      return zartFej + '<tr class="g' + (s.zart ? ' zart' : '') + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + (poz[i] % 2 ? ' cs' : '') + '">' + fej +
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
@@ -1043,7 +1115,8 @@
     // a fejrész alatti rés (margó) is beleszámít: a táblázatfejléc a rés alatt áll meg, a rést a lap háttere takarja (2026.11.26.)
     if (f) {
       const res = parseFloat(getComputedStyle(f).marginBottom) || 0;
-      s.setProperty('--fejM', (f.offsetHeight + res) + 'px');
+      // tört képpontos magasság (az offsetHeight egészre kerekít – 125%-os nagyításnál így maradt egy vékony, átlátszó csík)
+      s.setProperty('--fejM', (f.getBoundingClientRect().height + res) + 'px');
       s.setProperty('--fejRes', res + 'px'); // a takaró pontosan a rés magasságú (nem lóg rá az alatta lévő kártyára)
     }
   }
