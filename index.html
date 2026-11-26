@@ -238,10 +238,9 @@
   .tabla tr.gf td { border-top: 2px solid var(--keret); }
   .tabla tr.gl td, .tabla td.gcell { border-bottom: 2px solid var(--keret); }
   .tabla tr.g td:last-child { border-right: 2px solid var(--keret); }
-  .tabla tr.gf td.c-bolt { border-top-left-radius: 9px; } .tabla tr.gf td:last-child { border-top-right-radius: 9px; }
+
   .tabla td.c-bolt.gcell { border-bottom-left-radius: 9px; } .tabla tr.gl td:last-child { border-bottom-right-radius: 9px; }
-  .tabla tbody tr.koz td { height: 10px; padding: 0; border: 0; background: var(--panel); }
-  .tabla tbody tr.koz:hover td { background: var(--panel); }
+
   .tabla tr.g:hover td.c-bolt, .tabla tr.g:hover td.c-ceg { background: #fdf9f1; }
   /* az összesítő széles: a bolt neve, a cég és a kategória egy sorban */
   body.szeles main, body.szeles header.top .in, body.szeles footer { max-width: 1480px; }
@@ -374,6 +373,42 @@
     select, input[type=search] { font-size: 17px; }
     .fej h1 { font-size: 20px; } header.top .cim { font-size: 17px; }
   }
+
+  /* ===== 2026.11.26. javítások ===== */
+  /* a boltok csoportjai fehér sáv nélkül, egymás alatt; a csoportokat a barna keret választja el (lekerekítés nélkül) */
+  .tabla td.c-bolt.gcell, .tabla tr.gl td:last-child { border-radius: 0; }
+  /* a rögzített fejrész alatti rés: a görgetett lista nem látszik át (a rés a lap hátterével takarva) */
+  .fej::after { content: ""; position: absolute; left: -2px; right: -2px; top: 100%; height: 15px; background: var(--bg); }
+  /* táblázatfejléc: rendes cellaszegély (sötétbarna keret, világos elválasztók), sarkok lekerekítés nélkül */
+  .tabla th { border-top: 1px solid #5f2c07; border-bottom: 1px solid #5f2c07; border-right: 1px solid rgba(255, 255, 255, .38); }
+  .tabla th:first-child { border-left: 1px solid #5f2c07; } .tabla th:last-child { border-right: 1px solid #5f2c07; }
+  .tablakartya .tabla th:first-child, .tablakartya .tabla th:last-child { border-radius: 0; }
+  .kartya.tablakartya { border-radius: 0 0 14px 14px; }
+  /* cím két sorban: irányítószám + város, alatta a többi */
+  .tabla td.c-bolt .bcim, .fej .cimsor { white-space: normal; }
+  .fej .cimsor { align-items: flex-start; } .fej .cimsor i { margin-top: 2px; }
+  /* jelmagyarázat és tudnivalók: külön keretben */
+  footer { max-width: 1120px; }
+  footer .labkeret { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 14px rgba(74, 40, 16, .10); padding: 18px 20px; }
+  footer .labkeret h2 { margin: 0 0 10px; font-size: 18px; font-weight: 700; color: var(--barna); display: flex; align-items: center; gap: 8px; }
+  footer .labkeret h2 i { font-size: 20px; }
+  footer .labkeret h2 + .jelek { margin-top: 0; }
+  footer .jelek { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px 18px; margin: 0 0 16px; }
+  footer .jelek > div { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  footer .jelek .badge { display: inline-flex; align-items: center; gap: 5px; }
+  footer .jelek .badge i { font-size: 14px; }
+  footer .jelek p { margin: 0; color: var(--sugo); font-size: 15px; line-height: 1.35; }
+  footer .tudni { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 12px; }
+  footer .tudni p { margin: 0; color: var(--kakao); font-size: 15.5px; display: flex; gap: 8px; align-items: flex-start; }
+  footer .tudni p i { color: var(--barna); font-size: 18px; margin-top: 1px; }
+  footer .kapcs { display: flex; align-items: center; gap: 14px 20px; flex-wrap: wrap; background: var(--liszt); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  footer .kapcs .szoveg { flex: 1; min-width: 240px; color: var(--kakao); font-size: 15.5px; }
+  footer .kapcs .szoveg b { color: var(--barna); }
+  footer .kapcs .gomb { text-decoration: none; min-height: 48px; padding: 10px 20px; font-size: 18px; color: #fff; }
+  footer .kapcs .gomb i { font-size: 20px; }
+  @media (max-width: 560px) { footer .kapcs .gomb { width: 100%; } footer .labkeret { padding: 14px; } }
+  .talalat .tipp { display: inline-flex; align-items: center; gap: 6px; color: var(--sugo); }
+  .talalat .tipp i { color: var(--barna); font-size: 16px; }
 </style>
 </head>
 <body class="szeles">
@@ -391,9 +426,23 @@
   <div id="lista"><div class="info"><span class="spin"></span> Betöltés…</div></div>
 </main>
 <footer>
-  <div class="jel"><span class="badge b-ok"><i class="ti ti-circle-check" aria-hidden="true"></i>Érvényes</span><span class="badge b-warn"><i class="ti ti-clock" aria-hidden="true"></i>Hamarosan esedékes</span><span class="badge b-err"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Lejárt</span><span class="badge b-miss"><i class="ti ti-circle-dashed" aria-hidden="true"></i>Hiányzik</span></div>
-  <p><i class="ti ti-lock" aria-hidden="true"></i> Ez az oldal kizárólag betekintésre és letöltésre szolgál; a dokumentumok itt nem módosíthatók és nem törölhetők.</p>
-  <p>Kérdés, hiányzó vagy hibás adat esetén vedd fel a kapcsolatot Jacsó Józseffel: <a href="mailto:jacso.jozsef@lipotipekseg.hu">jacso.jozsef@lipotipekseg.hu</a></p>
+  <section class="labkeret" aria-labelledby="jelcim">
+    <h2 id="jelcim"><i class="ti ti-info-circle" aria-hidden="true"></i>Jelmagyarázat – mit jelentenek az állapotok?</h2>
+    <div class="jelek">
+      <div><span class="badge b-ok"><i class="ti ti-circle-check" aria-hidden="true"></i>Érvényes</span><p>A dokumentum megvan, és még hosszabb ideig érvényes.</p></div>
+      <div><span class="badge b-warn"><i class="ti ti-clock" aria-hidden="true"></i>Hamarosan esedékes</span><p>Még érvényes, de hamarosan lejár – időben kérd a következő felülvizsgálatot.</p></div>
+      <div><span class="badge b-err"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Lejárt</span><p>Az érvényessége lejárt – új felülvizsgálat vagy dokumentum szükséges.</p></div>
+      <div><span class="badge b-miss"><i class="ti ti-circle-dashed" aria-hidden="true"></i>Hiányzik</span><p>Még nincs feltöltött dokumentum ehhez a tételhez.</p></div>
+      <div><span class="badge b-info"><i class="ti ti-info-circle" aria-hidden="true"></i>Külső kezelésű</span><p>Ezt a tételt nem mi intézzük, hanem külső fél (pl. a bérbeadó vagy a szolgáltató).</p></div>
+    </div>
+    <div class="tudni">
+      <p><i class="ti ti-lock" aria-hidden="true"></i><span>Ez az oldal csak betekintésre és letöltésre szolgál: a dokumentumok itt nem módosíthatók és nem törölhetők.</span></p>
+      <div class="kapcs">
+        <div class="szoveg">Kérdésed van, vagy hiányzó, illetve hibás adatot találtál? Írj <b>Jacsó Józsefnek</b> – a gombra kattintva rögtön megnyílik egy új e-mail, a címzett már ki van töltve.</div>
+        <a class="gomb" href="mailto:jacso.jozsef@lipotipekseg.hu?subject=Bolti%20dokumentumt%C3%A1r%20%E2%80%93%20k%C3%A9rd%C3%A9s%20%2F%20hib%C3%A1s%20adat"><i class="ti ti-mail" aria-hidden="true"></i>E-mail küldése</a>
+      </div>
+    </div>
+  </section>
 </footer>
 
 <script>
@@ -683,7 +732,7 @@
             (ossz.kategoriak || ossz.sorok.map((s) => s.kat).filter((k, i, l) => l.indexOf(k) === i)).map((k) => '<option>' + esc(k) + '</option>').join('') +
             (ossz.sorok.some((s) => s.kivont) ? '<option value="' + KIVONT + '">Eladott, selejtezett, átadott eszközök</option>' : '') + '</select></div>' +
         '</div>' +
-        '<div class="talalat"><span id="db"></span><span>Kattints a bolt nevére a bolt részletes oldalához.</span></div>';
+        '<div class="talalat"><span id="db"></span><span class="tipp"><i class="ti ti-pointer" aria-hidden="true"></i>A bolt nevére kattintva megnyílik a bolt adatlapja – minden felülvizsgálat, eszköz és dokumentum egy helyen, részletesen.</span></div>';
       $('fejszuro').hidden = false;
       fejMeret();
       $('lista').innerHTML = '<section class="kartya tablakartya"><table class="tabla"><thead><tr><th>Bolt / cím</th><th>Cég</th><th>Kategória</th><th>Tétel</th><th>Azonosító</th>' +
@@ -700,6 +749,11 @@
   }
   /** A bolt címe a Boltok lapról (a megszűnt boltoké is). */
   const boltCim = (b) => (ossz && ossz.cimek && ossz.cimek[b]) || '';
+  /** A cím két sorban (2026.11.26.): irányítószám + város (az első vesszőig), alatta a többi – HTML-ként. */
+  const cimKetSor = (c) => {
+    const t = String(c || '').trim(), i = t.indexOf(',');
+    return i < 0 ? esc(t) : esc(t.slice(0, i + 1)) + '<br>' + esc(t.slice(i + 1).trim());
+  };
   const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   /** Az összesítő állapotjelvénye ikonnal (mint a bolt oldalán); a kivont eszköz a saját színével (átadva, eladva, leselejtezve). */
   function allapotJel(s) {
@@ -737,10 +791,9 @@
       const n = csop[i], gc = n ? ' rowspan="' + n + '"' : '', gcell = n ? ' gcell' : '';
       const fej = n ? '<td class="c-bolt' + gcell + '"' + gc + '><span class="ragad">' + (s.zart ? '<span class="bolt">' + esc(s.bolt) + '</span><span class="sub zartb">megszűnt / átadott bolt</span>'
           : '<a href="#" class="bolt" data-bolt="' + esc(s.bolt) + '">' + esc(s.bolt) + '</a>') +
-          (boltCim(s.bolt) ? '<span class="bcim">' + esc(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
+          (boltCim(s.bolt) ? '<span class="bcim">' + cimKetSor(boltCim(s.bolt)) + '</span>' : '') + '</span></td>' +
         '<td class="c-ceg' + gcell + '"' + gc + '><span class="ragad">' + esc(s.ceg) + '</span></td>' : '';
-      return (n && i ? '<tr class="koz" aria-hidden="true"><td colspan="9"></td></tr>' : '') +
-      '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + (poz[i] % 2 ? ' cs' : '') + '">' + fej +
+      return '<tr class="g' + (n ? ' gf' : '') + (utolso[i] ? ' gl' : '') + (poz[i] % 2 ? ' cs' : '') + '">' + fej +
       '<td class="c-kat"><i class="ti ti-' + esc(s.ikon) + ' k" style="color:' + ikSzin(s.ikon)[0] + '" aria-hidden="true"></i>' + esc(s.kat) + '</td>' +
       // a kivont eszköz állapota már a jelvényben van – ott nem kell még egyszer a név mellé
       '<td' + (kv && s.reszlet ? ' title="' + esc(s.reszlet) + '"' : '') + '>' + esc(cim) + (s.kivont || kulsoHely ? '' : eszkJel(s.eszk)) + (s.ceges ? '<span class="ceg">cégszintű</span>' : '') +
@@ -761,7 +814,7 @@
   // ---------------- egy bolt nézete
   /** A bolt címe a fejlécben, a cégnév alatt (térkép-tű ikonnal). */
   function cimsor(c) {
-    $('cimsor').innerHTML = c ? '<i class="ti ti-map-pin" aria-hidden="true"></i>' + esc(c) : '';
+    $('cimsor').innerHTML = c ? '<i class="ti ti-map-pin" aria-hidden="true"></i><span>' + cimKetSor(c) + '</span>' : '';
     $('cimsor').hidden = !c;
   }
   async function boltMutat(nev) {
@@ -905,7 +958,8 @@
   function fejMeret() {
     const f = document.querySelector('.fej'), t = document.querySelector('header.top'), s = document.documentElement.style;
     if (t) s.setProperty('--topM', t.offsetHeight + 'px');
-    if (f) s.setProperty('--fejM', f.offsetHeight + 'px');
+    // a fejrész alatti rés (margó) is beleszámít: a táblázatfejléc a rés alatt áll meg, a rést a lap háttere takarja (2026.11.26.)
+    if (f) s.setProperty('--fejM', (f.offsetHeight + (parseFloat(getComputedStyle(f).marginBottom) || 0)) + 'px');
   }
   if (!mobilSites) {
     window.addEventListener('resize', fejMeret);
