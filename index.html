@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795767695061";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795768266263";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -615,6 +615,12 @@
   /* bolt oldala (2026.11.26.): a lábléc (jelmagyarázat) a bolt kártyáinak szélességében; a „… · utolsó frissítve” felirat egy sorban */
   body:not(.szeles) footer { max-width: 900px; }
   main.keskeny .fej .al { white-space: nowrap; }
+  /* bolt fejrésze tagolva (2026.11.27., felhasználó: „nagyon átláthatatlan, legyen jobban elválasztva”): név + cég egy blokk; alatta
+     térközzel a működési cím; alatta vékony elválasztó vonal után a „Felülvizsgálati dokumentumok | utolsó frissítve” sor */
+  main.keskeny .fej .cegsor { margin-top: 2px; line-height: 1.25; }
+  main.keskeny .fej .cimsor { margin-top: 12px; line-height: 1.4; }
+  main.keskeny .fej .cimsor .mcimke { margin-bottom: 2px; }
+  main.keskeny .fej .al { display: inline-block; margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--morzsa); }
   /* fejléc: a „Bolt / cím” és a „Cég” közötti elválasztó (a szélső cella szegélyét egy korábbi szabály átlátszóvá tette) */
   .tablakartya .tabla th:first-child { border-right: 1px solid var(--thVonal); }
   .tabla .sub.reszlet { display: block; text-align: center; line-height: 1.3; }
