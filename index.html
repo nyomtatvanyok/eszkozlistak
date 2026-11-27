@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795767554382";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795767695061";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -680,6 +680,10 @@
   .ph-duotone, .ph-bold { line-height: 1; vertical-align: -0.125em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   /* (2026.11.27.: precízebb – a csempe-ikon kitöltése finomabb, a vonal tiszta; a kis ikonok éles, egyenletes vonalúak) */
   .ph-duotone.ph-duotone::before { opacity: .2; }
+  /* csempék: az ikon a doboz ~60%-a, a doboz szélén vékony, a színével egyező keret – élesebb, rendezettebb kontúr */
+  .it i, .kfej .it i { font-size: 23px; } .it.kis i { font-size: 20px; }
+  .it { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 22%, transparent); }
+  .fej .ikon, .tolto-ikon, .fmikon, .blogo { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--barna) 18%, transparent); }
   /* a két réteg mindig pontosan egymáson – a rácsos / flex ikondobozokban (csempék, gombok) is: a felső réteg a halvány réteg
      helyén, abszolút pozícióval, középre igazítva (a csomag alapból margóval tolja vissza, ami rácsban szétcsúszik) */
   i.ph-duotone { position: relative; }
