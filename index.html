@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795766727313";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795767209212";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -481,11 +481,12 @@
      alja „levágottnak” látszott): a takaró a panel saját, lefelé eltolt, lap színű árnyéka – a panel MÖGÖTT van, a panel szegélye,
      lekerekítése és árnyéka érintetlen, a sarkok mögötti részt és a rést is fedi */
   .fej::after, body.gorget .fej::after { content: none; display: none; }
-  /* (2026.11.27.: a felső lekerekített sarkok mögött is átlátszott a lista – a panel felfelé eltolt, lap színű árnyéka takarja) */
-  body.gorget .fej { box-shadow: 0 -14px 0 0 var(--bg), 0 4px 14px rgba(74, 40, 16, .10), 0 var(--fejRes, 14px) 0 0 var(--bg); }
+  /* (2026.11.27.: a felső lekerekített sarkok mögött is átlátszott a lista – a panel felfelé eltolt, lap színű árnyéka takarja; a lágy
+     árnyék a takaró FÖLÖTT van, így a sarokban is ugyanúgy árnyékolt a háttér, mint a panel mellett – nem válik el külön foltként) */
+  body.gorget .fej { box-shadow: 0 4px 14px rgba(74, 40, 16, .10), 0 -14px 0 0 var(--bg), 0 var(--fejRes, 14px) 0 0 var(--bg); }
   /* a bolt lapján nincs rögzített táblázatfejléc, így takarósáv sem kell (2026.11.27., felhasználó: „a rögzített felső sor alatt még ott
      van egy üres rész … az nem kell”) – csak a fehér panel marad */
-  body.gorget:not(.szeles) .fej { box-shadow: 0 -14px 0 0 var(--bg), 0 4px 14px rgba(74, 40, 16, .10); }
+  body.gorget:not(.szeles) .fej { box-shadow: 0 4px 14px rgba(74, 40, 16, .10), 0 -14px 0 0 var(--bg); }
 
   /* a bolt lapján a sor jobb oldala (2026.11.26., felhasználó: „érvényes, megtekintés gomb legyen ugyanakkora, mint a letöltés gomb”):
      ahol letöltés is van, az állapotjelvény és a megtekintés gomb is a Letöltés gomb magasságú, ugyanolyan lekerekítéssel */
