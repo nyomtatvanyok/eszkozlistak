@@ -8,7 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bolti dokumentumtár</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Crect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%237a3a0e%22/%3E%3Cpath d=%22M6 7h5l2 2h5v8H6z%22 fill=%22none%22 stroke=%22white%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<script>(function(){var V="1795776847028";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){var V="1795777461795";try{var u=new URL(location.href);if(u.searchParams.get("_v")===V){u.searchParams.delete("_v");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);}fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){if(!j||!j.v||j.v===V)return;var w=new URL(location.href);if(w.searchParams.get("_v")===j.v)return;w.searchParams.set("_v",j.v);location.replace(w.toString());}).catch(function(){});}catch(e){}})();</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <!-- modern, kéttónusú ikonok (2026.11.26., felhasználó: „az ikonok, piktogramok legyenek modernebbek”) – lásd lent: ikonCsere -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css">
@@ -1221,9 +1221,12 @@
     const szoveg = ket ? esc(s.allapot).replace(/ (\S+)$/, '<br>$1') : esc(s.allapot);
     return '<span class="badge b-' + esc(szin) + (ket ? ' ket' : '') + (online ? ' online' : '') + '">' + (ik ? '<i class="ti ti-' + ik + '" aria-hidden="true"></i>' : '') + (ket ? '<span>' + szoveg + '</span>' : szoveg) + '</span>';
   }
+  // (2026.11.27., felhasználó) az „Online pénztárgép (NAV-bekötött)” blokknyomtató-sor (a nyugtát az online pénztárgép nyomtatja) nem jelenik meg
+  const onlinePgSor = (s) => s.allapot === 'Online pénztárgép (NAV-bekötött)';
   function szur() {
     const szavak = norm($('q').value).split(/\s+/).filter(Boolean), c = $('fceg').value, b = $('fbolt').value, k = $('fkat').value;
     const l = ossz.sorok.filter((s) => {
+      if (onlinePgSor(s)) return false; // (2026.11.27.) az online pénztárgépes blokknyomtató-sor nem kell
       if (c && s.ceg !== c) return false;
       if (b && s.bolt !== b) return false;
       if (k === KIVONT ? !s.kivont : k && s.kat !== k) return false;
@@ -1371,7 +1374,8 @@
     // bankterminálok (a bolt eszközei, dokumentum nélkül)
     if (r.terminalok && r.terminalok.length) kartyak.push(terminalKartya(r.terminalok, r.bolt, r.ceg));
     // hőpapíros blokknyomtatók
-    if (r.nyomtatok && r.nyomtatok.length) kartyak.push(nyomtatoKartya(r.nyomtatok));
+    const nyomt = (r.nyomtatok || []).filter((t) => !onlinePgSor(t));
+    if (nyomt.length) kartyak.push(nyomtatoKartya(nyomt));
     // eladott, leselejtezett eszközök (a korábbi gépek, dokumentumukkal, ha van)
     if (r.kivont && r.kivont.length) {
       const rend = (x) => (KIV_ALL[x.allapot] || [0, 0, 3])[2];
